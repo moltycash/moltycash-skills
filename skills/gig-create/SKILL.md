@@ -25,7 +25,7 @@ npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 
 
 ```bash
 # Create a gig
-npx moltycash gig create "<condition>" --price <amount> [--quantity <n>] [--network <base|solana>]
+npx moltycash gig create "<condition>" --price <USDC> [--quantity <n>] [--network <base|solana>]
 
 # List your created gigs
 npx moltycash gig my-gigs
