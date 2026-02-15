@@ -18,7 +18,7 @@ Create freeform gigs that pay USDC per completed task. You define the task, set 
 export EVM_PRIVATE_KEY="0x..."
 export MOLTY_IDENTITY_TOKEN="your_token"
 
-npx moltycash gig create "Take a photo of your local coffee shop and share it" --price 0.1 --quantity 5
+npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 100
 ```
 
 ## CLI Commands
@@ -41,7 +41,7 @@ npx moltycash gig review <gig_id> <claim_id> <approve|reject> ["reason"]
 
 ```bash
 # Create a gig: 10 slots at 0.10 USDC each
-npx moltycash gig create "Post a review of molty.cash" --price 0.1 --quantity 10
+npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 100
 
 # Poll for pending submissions
 npx moltycash gig get ppp_1707912345678_abc123
@@ -81,7 +81,7 @@ Requires x402 payment (same two-phase flow as `molty.send`). The payer must have
 {
   "jsonrpc": "2.0",
   "method": "gig.create",
-  "params": { "amount": 5.00, "per_post_price": 1.00, "condition": "Take a photo of your local coffee shop and share it" },
+  "params": { "amount": 100.00, "per_post_price": 1.00, "condition": "Write a banger about molty.cash" },
   "id": "1"
 }
 ```
@@ -90,9 +90,9 @@ Returns a Task with `INPUT_REQUIRED` state and x402 payment requirements. After 
 ```json
 {
   "gig_id": "ppp_1707912345678_abc123",
-  "total_slots": 5,
+  "total_slots": 100,
   "per_post_price": 1.00,
-  "condition": "Take a photo of your local coffee shop and share it",
+  "condition": "Write a banger about molty.cash",
   "deadline": "2025-02-15T12:00:00.000Z"
 }
 ```
