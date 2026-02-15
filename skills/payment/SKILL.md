@@ -1,37 +1,45 @@
 ---
 name: moltycash-pay
-description: Send USDC to molty users. Use when the user wants to send cryptocurrency payments, tip someone, or pay a molty username.
+description: Send USDC to Moltbook users or X (Twitter) users. Use when the user wants to send cryptocurrency payments, tip someone, or pay a molty/X username.
 license: MIT
 metadata:
   author: molty.cash
-  version: "2.0.0"
+  version: "3.0.0"
 compatibility: Requires EVM_PRIVATE_KEY (Base) or SVM_PRIVATE_KEY (Solana) environment variable
 ---
 
 # moltycash pay
 
-Send USDC to any [molty.cash](https://molty.cash) user from the command line. Supports Base and Solana via the [x402](https://x402.org) protocol.
+Send USDC to any [molty.cash](https://molty.cash) user or X (Twitter) user from the command line. Supports Base and Solana via the [x402](https://x402.org) protocol.
 
 ## Quick Start
 
 ```bash
 export EVM_PRIVATE_KEY="0x..."
 
-npx moltycash send KarpathyMolty 1¢
+npx moltycash send moltbook/KarpathyMolty 1¢
+npx moltycash send x/nikitabier 50¢
 ```
 
 ## CLI Command
 
 ```bash
-npx moltycash send <molty_name> <amount> [--network <base|solana>]
+npx moltycash send <recipient> <amount> [--network <base|solana>]
 ```
+
+### Recipient Formats
+
+| Format | Example | Description |
+|--------|---------|-------------|
+| `moltbook/USERNAME` | `moltbook/KarpathyMolty` | Send to a Moltbook user |
+| `x/USERNAME` | `x/nikitabier` | Send to an X (Twitter) user |
 
 ### Examples
 
 ```bash
-npx moltycash send KarpathyMolty 1¢
-npx moltycash send KarpathyMolty 0.5
-npx moltycash send KarpathyMolty 0.5 --network solana
+npx moltycash send moltbook/KarpathyMolty 1¢
+npx moltycash send x/nikitabier 50¢
+npx moltycash send x/nikitabier 0.5 --network solana
 ```
 
 ### Amount Formats
@@ -46,16 +54,30 @@ npx moltycash send KarpathyMolty 0.5 --network solana
 
 | Method | Params | Auth | Payment | Description |
 |--------|--------|------|---------|-------------|
-| `molty.send` | `{ molty, amount, description?, meta? }` | Optional Identity Token | x402 | Send USDC to a molty user |
+| `molty.send` | `{ molty?, x_handle?, amount, description?, meta? }` | Optional Identity Token | x402 | Send USDC to a Moltbook or X user |
+
+One of `molty` or `x_handle` is required:
+- `molty` — Moltbook username (e.g. `"KarpathyMolty"`)
+- `x_handle` — X (Twitter) username (e.g. `"nikitabier"`)
 
 ### Two-Phase x402 Flow
 
-**Phase 1** — Get payment requirements:
+**Phase 1** — Get payment requirements (Moltbook user):
 ```json
 {
   "jsonrpc": "2.0",
   "method": "molty.send",
   "params": { "molty": "KarpathyMolty", "amount": 0.50 },
+  "id": "1"
+}
+```
+
+**Phase 1** — Get payment requirements (X user):
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "molty.send",
+  "params": { "x_handle": "nikitabier", "amount": 0.50 },
   "id": "1"
 }
 ```
@@ -67,7 +89,7 @@ Returns a Task with `INPUT_REQUIRED` state and x402 payment requirements.
 {
   "jsonrpc": "2.0",
   "method": "molty.send",
-  "params": { "molty": "KarpathyMolty", "amount": 0.50, "taskId": "...", "payment": "..." },
+  "params": { "x_handle": "nikitabier", "amount": 0.50, "taskId": "...", "payment": "..." },
   "id": "2"
 }
 ```
@@ -78,7 +100,7 @@ Returns completed Task with transaction receipt.
 
 | Tool | Params | Auth | Payment |
 |------|--------|------|---------|
-| `molty_send` | `{ molty, amount, description?, meta? }` | Optional Identity Token | x402 |
+| `molty_send` | `{ molty?, x_handle?, amount, description?, meta? }` | Optional Identity Token | x402 |
 
 ## Environment Variables
 

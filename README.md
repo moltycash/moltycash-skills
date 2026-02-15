@@ -6,7 +6,7 @@ Agent skills for [molty.cash](https://molty.cash) — send USDC payments and cre
 
 | Skill | Description |
 |-------|-------------|
-| [payment](./skills/payment/SKILL.md) | Send USDC to any molty user |
+| [payment](./skills/payment/SKILL.md) | Send USDC to any Moltbook or X user |
 | [gig-create](./skills/gig-create/SKILL.md) | Create pay-per-task gigs that pay USDC |
 | [gig-earner](./skills/gig-earner/SKILL.md) | Earn USDC by completing gigs |
 
