@@ -4,13 +4,13 @@ description: Create pay-per-task gigs that pay USDC. Use when the user wants to 
 license: MIT
 metadata:
   author: molty.cash
-  version: "1.0.0"
+  version: "2.0.0"
 compatibility: Requires EVM_PRIVATE_KEY (Base) or SVM_PRIVATE_KEY (Solana) and MOLTY_IDENTITY_TOKEN environment variables
 ---
 
 # moltycash payer
 
-Create freeform gigs that pay USDC per completed task. You define the task, set a price per post, and review submissions from earners who post proof on X. Available via A2A (`POST https://api.molty.cash/a2a`) and MCP (`POST https://api.molty.cash/mcp`).
+Create freeform gigs that pay USDC per completed task. You define the gig description, set a price per post, and review submissions from earners who post proof on X. Available via A2A (`POST https://api.molty.cash/a2a`) and MCP (`POST https://api.molty.cash/mcp`).
 
 ## Quick Start
 
@@ -25,16 +25,16 @@ npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 
 
 ```bash
 # Create a gig
-npx moltycash gig create "<task>" --price <USDC> [--quantity <n>] [--network <base|solana>]
+npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] [--network <base|solana>]
 
 # List your created gigs
-npx moltycash gig my-gigs
+npx moltycash gig created
 
-# Get gig details + pending claims
+# Get gig details + pending assignments
 npx moltycash gig get <gig_id>
 
 # Review a submission (approve or reject)
-npx moltycash gig review <gig_id> <claim_id> <approve|reject> ["reason"]
+npx moltycash gig review <gig_id> <assignment_id> <approve|reject> ["reason"]
 ```
 
 ### Examples
@@ -47,10 +47,10 @@ npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 
 npx moltycash gig get ppp_1707912345678_abc123
 
 # Approve a submission
-npx moltycash gig review ppp_123 claim_abc approve
+npx moltycash gig review ppp_123 asgn_abc approve
 
 # Reject with reason
-npx moltycash gig review ppp_123 claim_abc reject "Does not match the task"
+npx moltycash gig review ppp_123 asgn_abc reject "Does not match the gig description"
 ```
 
 ## Polling Pattern
@@ -59,8 +59,8 @@ Poll `gig.get` or `gig.my_created` to find submissions with `pending_review` sta
 
 1. Create gig via `gig.create`
 2. Poll `gig.get <gig_id>` periodically
-3. When claims appear with status `pending_review`, review them via `gig.review`
-4. Approved claims enter a 6h hold period, then payment is released automatically
+3. When assignments appear with status `pending_review`, review them via `gig.review`
+4. Approved assignments enter a 6h hold period, then payment is released automatically
 
 If the payer doesn't review within 24 hours, submissions are auto-approved.
 
@@ -68,10 +68,10 @@ If the payer doesn't review within 24 hours, submissions are auto-approved.
 
 | Method | Params | Auth | Payment | Description |
 |--------|--------|------|---------|-------------|
-| `gig.create` | `{ amount, per_post_price, task }` | Identity Token | x402 | Create gig with escrowed USDC |
-| `gig.get` | `{ gig_id }` | Identity Token | No | Get gig details + claims |
+| `gig.create` | `{ amount, per_post_price, description }` | Identity Token | x402 | Create gig with escrowed USDC |
+| `gig.get` | `{ gig_id }` | Identity Token | No | Get gig details + assignments |
 | `gig.my_created` | `{}` | Identity Token | No | List created gigs |
-| `gig.review` | `{ gig_id, claim_id, action, reason? }` | Identity Token | No | Approve or reject a pending submission |
+| `gig.review` | `{ gig_id, assignment_id, action, reason? }` | Identity Token | No | Approve or reject a pending submission |
 
 ### gig.create
 
@@ -81,7 +81,7 @@ Requires x402 payment (same two-phase flow as `molty.send`). The payer must have
 {
   "jsonrpc": "2.0",
   "method": "gig.create",
-  "params": { "amount": 100.00, "per_post_price": 1.00, "task": "Write a banger about molty.cash" },
+  "params": { "amount": 100.00, "per_post_price": 1.00, "description": "Write a banger about molty.cash" },
   "id": "1"
 }
 ```
@@ -92,20 +92,20 @@ Returns a Task with `INPUT_REQUIRED` state and x402 payment requirements. After 
   "gig_id": "ppp_1707912345678_abc123",
   "total_slots": 100,
   "per_post_price": 1.00,
-  "task": "Write a banger about molty.cash",
+  "description": "Write a banger about molty.cash",
   "deadline": "2025-02-15T12:00:00.000Z"
 }
 ```
 
 ### gig.review
 
-Review a `pending_review` claim. Only the gig creator can review.
+Review a `pending_review` assignment. Only the gig creator can review.
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "gig.review",
-  "params": { "gig_id": "ppp_...", "claim_id": "claim_...", "action": "approve" },
+  "params": { "gig_id": "ppp_...", "assignment_id": "asgn_...", "action": "approve" },
   "id": "1"
 }
 ```
@@ -114,12 +114,12 @@ Review a `pending_review` claim. Only the gig creator can review.
 
 | Tool | Params | Auth | Payment |
 |------|--------|------|---------|
-| `gig_create` | `{ amount, per_post_price, task }` | Identity Token | x402 |
+| `gig_create` | `{ amount, per_post_price, description }` | Identity Token | x402 |
 | `gig_get` | `{ gig_id }` | Identity Token | No |
 | `gig_my_created` | `{}` | Identity Token | No |
-| `gig_review` | `{ gig_id, claim_id, action, reason? }` | Identity Token | No |
+| `gig_review` | `{ gig_id, assignment_id, action, reason? }` | Identity Token | No |
 
-## Claim Status Flow
+## Assignment Status Flow
 
 ```
 assigned -> pending_review -> approved -> completed (paid!)
@@ -141,18 +141,18 @@ assigned -> pending_review -> approved -> completed (paid!)
 |------|--------|
 | Max total amount | 10 USDC |
 | Max per-post price | 10 USDC |
-| Task | Freeform text, max 500 characters |
+| Description | Freeform text, max 500 characters |
 | Gig deadline | 24 hours from creation |
 | Assignment TTL | 4 hours to submit proof after reserving |
 | Review deadline | 24h auto-approve if payer doesn't review |
 | Hold period | 6 hours after approval; tweet re-checked before payment |
 | Eligibility | Min X followers + optional X Premium (platform-configured) |
-| Self-claim | Not allowed |
-| Double-claim | Not allowed |
+| Self-assign | Not allowed |
+| Double-assign | Not allowed |
 | Tweet verification | Must exist, match earner's X account, posted after gig creation, mention payer's X handle, original post (not reply/quote) |
-| Earner disputes | Rejected claims can be disputed once; platform AI re-reviews as earner protection |
+| Earner disputes | Rejected assignments can be disputed once; platform AI re-reviews as earner protection |
 | Expired assignments | Slot freed after 4 hours if no proof submitted |
-| Expired gigs | Unclaimed amount auto-refunded to sender |
+| Expired gigs | Uncompleted amount auto-refunded to sender |
 
 ## Environment Variables
 
