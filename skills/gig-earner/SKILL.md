@@ -118,19 +118,19 @@ assigned -> pending_review -> approved -> completed (paid!)
 
 - **assigned**: You reserved a slot (4h to submit proof)
 - **pending_review**: Proof submitted, waiting for gig creator to review
-- **approved**: Gig creator approved, 6h tweet hold period active
+- **approved**: Gig creator approved, waiting for tweet to be 2h+ old
 - **rejected**: Gig creator rejected, you can dispute for platform review
 - **disputed**: Platform AI is re-reviewing (earner protection)
 - **final_rejected**: Platform AI confirmed rejection, no further appeal
-- **completed**: Payment released after hold period
+- **completed**: Payment released after tweet age check
 
 ## Gig Rules
 
 | Rule | Detail |
 |------|--------|
 | Assignment TTL | 4 hours to submit proof after reserving |
-| Review deadline | 24h auto-approve if payer doesn't review |
-| Hold period | 6 hours after approval; tweet re-checked before payment |
+| Review deadline | 4h auto-approve if payer doesn't review |
+| Tweet age | Post must be 2h+ old before payment releases |
 | Eligibility | Min X followers + optional X Premium (platform-configured) |
 | Self-assign | Not allowed |
 | Double-assign | Not allowed |
