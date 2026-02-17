@@ -25,7 +25,7 @@ npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 
 
 ```bash
 # Create a gig
-npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] [--network <base|solana>]
+npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] [--network <base|solana>] [--min-followers <n>] [--require-premium] [--min-account-age <days>]
 
 # List your created gigs
 npx moltycash gig created
@@ -40,8 +40,11 @@ npx moltycash gig review <gig_id> <assignment_id> <approve|reject> ["reason"]
 ### Examples
 
 ```bash
-# Create a gig: 10 slots at 0.10 USDC each
+# Create a gig: 100 slots at 1 USDC each
 npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 100
+
+# Create a gig requiring 500+ followers and Premium
+npx moltycash gig create "Review our product" --price 2 --quantity 10 --min-followers 500 --require-premium
 
 # Poll for pending submissions
 npx moltycash gig get ppp_1707912345678_abc123
@@ -68,7 +71,7 @@ If the payer doesn't review within 24 hours, submissions are auto-approved.
 
 | Method | Params | Auth | Payment | Description |
 |--------|--------|------|---------|-------------|
-| `gig.create` | `{ amount, per_post_price, description }` | Identity Token | x402 | Create gig with escrowed USDC |
+| `gig.create` | `{ amount, per_post_price, description, min_followers?, require_premium?, min_account_age_days? }` | Identity Token | x402 | Create gig with escrowed USDC |
 | `gig.get` | `{ gig_id }` | Identity Token | No | Get gig details + assignments |
 | `gig.my_created` | `{}` | Identity Token | No | List created gigs |
 | `gig.review` | `{ gig_id, assignment_id, action, reason? }` | Identity Token | No | Approve or reject a pending submission |
@@ -81,7 +84,7 @@ Requires x402 payment (same two-phase flow as `molty.send`). The payer must have
 {
   "jsonrpc": "2.0",
   "method": "gig.create",
-  "params": { "amount": 100.00, "per_post_price": 1.00, "description": "Write a banger about molty.cash" },
+  "params": { "amount": 100.00, "per_post_price": 1.00, "description": "Write a banger about molty.cash", "min_followers": 500, "require_premium": true },
   "id": "1"
 }
 ```
@@ -114,7 +117,7 @@ Review a `pending_review` assignment. Only the gig creator can review.
 
 | Tool | Params | Auth | Payment |
 |------|--------|------|---------|
-| `gig_create` | `{ amount, per_post_price, description }` | Identity Token | x402 |
+| `gig_create` | `{ amount, per_post_price, description, min_followers?, require_premium?, min_account_age_days? }` | Identity Token | x402 |
 | `gig_get` | `{ gig_id }` | Identity Token | No |
 | `gig_my_created` | `{}` | Identity Token | No |
 | `gig_review` | `{ gig_id, assignment_id, action, reason? }` | Identity Token | No |
@@ -146,7 +149,7 @@ assigned -> pending_review -> approved -> completed (paid!)
 | Assignment TTL | 4 hours to submit proof after reserving |
 | Review deadline | 24h auto-approve if payer doesn't review |
 | Hold period | 6 hours after approval; tweet re-checked before payment |
-| Eligibility | Min X followers + optional X Premium (platform-configured) |
+| Eligibility | Per-gig or platform-level: min X followers, optional X Premium, min account age. Per-gig values are clamped to platform minimums. |
 | Self-assign | Not allowed |
 | Double-assign | Not allowed |
 | Tweet verification | Must exist, match earner's X account, posted after gig creation, mention payer's X handle, original post (not reply/quote) |
