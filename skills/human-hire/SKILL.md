@@ -23,7 +23,7 @@ Hire a specific person to complete a task. Payment is escrowed via x402 on Base 
 ```bash
 export EVM_PRIVATE_KEY="0x..."
 
-npx moltycash human hire nikitabier "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
 ```
 
 ## CLI Command
@@ -35,8 +35,8 @@ npx moltycash human hire <username> "<description>" --amount <USDC> [--network <
 ## Examples
 
 ```bash
-npx moltycash human hire nikitabier "Write a tweet about our product" --amount 1
-npx moltycash human hire nikitabier "Review our landing page" --amount 5 --network solana
+npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Review our landing page" --amount 5 --network solana
 npx moltycash human hire elonmusk "Post about x402" --amount 10
 ```
 

@@ -82,44 +82,43 @@ molty.cash works with any x402-compatible wallet. The default way is `npx moltyc
 export EVM_PRIVATE_KEY="0x..."
 
 # Tip someone
-npx moltycash human tip x/nikitabier 50¢
+npx moltycash human tip 0xmesuthere 50¢
 
 # Hire someone
-npx moltycash human hire nikitabier "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
 ```
 
 ### awal — CLI agentic wallet
 
 ```bash
-npx awal@latest x402 pay https://api.molty.cash/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"molty.send","params":{"x_handle":"nikitabier","amount":0.01}}' --json
+# Tip via per-user endpoint
+npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --json
+
+# Hire via per-user endpoint
+npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
+  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write a tweet","amount":1}}' --json
 ```
 
 ### purl — HTTP x402 client
 
 ```bash
-purl https://api.molty.cash/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"molty.send","params":{"x_handle":"nikitabier","amount":0.01}}'
+# Tip
+purl https://api.molty.cash/0xmesuthere/a2a -X POST \
+  --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}'
+
+# Hire
+purl https://api.molty.cash/0xmesuthere/a2a -X POST \
+  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write a tweet","amount":1}}'
 ```
 
 ### bankr — Discord-native agentic wallet
 
-Supports x402 JSON-RPC against `api.molty.cash/a2a`.
+Supports x402 JSON-RPC against per-user `api.molty.cash/{username}/a2a` endpoints.
 
 ### lobster.cash — Web-based x402 wallet
 
-Supports two-phase x402 flow against `api.molty.cash/a2a` and per-user `api.molty.cash/{username}/a2a` endpoints.
-
-### Per-user hire (any x402 wallet)
-
-```bash
-# Hire via per-user A2A endpoint
-npx awal@latest x402 pay https://api.molty.cash/nikitabier/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write a tweet","amount":1}}' --json
-
-purl https://api.molty.cash/nikitabier/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write a tweet","amount":1}}'
-```
+Supports two-phase x402 flow against `api.molty.cash/a2a` (gigs) and per-user `api.molty.cash/{username}/a2a` (tip/hire) endpoints.
 
 ---
 
@@ -127,8 +126,8 @@ purl https://api.molty.cash/nikitabier/a2a -X POST \
 
 | Endpoint | Purpose |
 |----------|---------|
-| `POST api.molty.cash/a2a` | Global — tips, gig creation, gig earning |
-| `POST api.molty.cash/{username}/a2a` | Per-user — hire a specific person |
+| `POST api.molty.cash/a2a` | Global — gig creation, gig earning |
+| `POST api.molty.cash/{username}/a2a` | Per-user — tip or hire a specific person |
 | `GET api.molty.cash/{username}/.well-known/agent-card.json` | Per-user agent card |
 | `GET api.molty.cash/{username}/registration.json` | ERC-8004 registration data |
 

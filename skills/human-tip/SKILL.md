@@ -1,6 +1,6 @@
 ---
 name: moltycash-human-tip
-description: Tip any X (Twitter) or Moltbook user with USDC on Base or Solana via x402.
+description: Tip any X (Twitter) user with USDC on Base or Solana via x402.
 license: MIT
 metadata:
   author: molty.cash
@@ -14,7 +14,7 @@ compatibility: Requires EVM_PRIVATE_KEY (Base) or SVM_PRIVATE_KEY (Solana).
 > Prerequisites: First read the common setup guide:
 > `curl https://molty.cash/skills/common/SKILL.md`
 
-Send USDC to any [molty.cash](https://molty.cash) user or X (Twitter) user.
+Tip any [molty.cash](https://molty.cash) user with USDC. Payment settles on-chain via x402 on Base or Solana.
 
 ---
 
@@ -23,52 +23,51 @@ Send USDC to any [molty.cash](https://molty.cash) user or X (Twitter) user.
 ```bash
 export EVM_PRIVATE_KEY="0x..."
 
-npx moltycash human tip x/nikitabier 50¢
-npx moltycash human tip moltbook/KarpathyMolty 1¢
+npx moltycash human tip 0xmesuthere 50¢
+npx moltycash human tip 0xmesuthere 100¢ --network solana
 ```
 
 ## CLI Command
 
 ```bash
-npx moltycash human tip <recipient> <amount> [--network <base|solana>]
+npx moltycash human tip <username> <amount> [--network <base|solana>]
 ```
-
-## Recipient Formats
-
-| Format | Example | Description |
-|--------|---------|-------------|
-| `x/USERNAME` | `x/nikitabier` | Send to an X (Twitter) user |
-| `moltbook/USERNAME` | `moltbook/KarpathyMolty` | Send to a Moltbook user |
 
 ## Examples
 
 ```bash
-npx moltycash human tip x/nikitabier 50¢
-npx moltycash human tip moltbook/KarpathyMolty 1¢
-npx moltycash human tip x/nikitabier 0.5 --network solana
+npx moltycash human tip 0xmesuthere 50¢
+npx moltycash human tip 0xmesuthere 0.5 --network solana
 ```
 
 ## A2A Method
 
-Endpoint: `POST https://api.molty.cash/a2a`
+Endpoint: `POST https://api.molty.cash/{username}/a2a`
 
 | Method | Params | Payment |
 |--------|--------|---------|
-| `molty.send` | `{ x_handle, molty, amount, description }` | x402 |
+| `tip` | `{ amount }` | x402 |
 
 ### Phase 1 — Get payment requirements:
 ```json
-{ "jsonrpc": "2.0", "method": "molty.send", "params": { "x_handle": "nikitabier", "amount": 0.50 }, "id": "1" }
+{ "jsonrpc": "2.0", "method": "tip", "params": { "amount": 0.50 }, "id": "1" }
 ```
 
 ### Phase 2 — Submit signed payment:
 ```json
-{ "jsonrpc": "2.0", "method": "molty.send", "params": { "x_handle": "nikitabier", "amount": 0.50, "taskId": "...", "payment": "..." }, "id": "2" }
+{ "jsonrpc": "2.0", "method": "tip", "params": { "amount": 0.50, "taskId": "...", "payment": "..." }, "id": "2" }
 ```
 
 ## Verified Sender (Optional)
 
 Include `MOLTY_IDENTITY_TOKEN` to appear as a verified sender in the recipient's transaction history.
+
+## Per-user Resources
+
+| Resource | URL |
+|----------|-----|
+| Agent Card | https://api.molty.cash/{username}/.well-known/agent-card.json |
+| A2A Endpoint | https://api.molty.cash/{username}/a2a |
 
 ## Links
 

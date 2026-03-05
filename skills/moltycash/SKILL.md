@@ -29,10 +29,10 @@ Fetch `common` first for setup instructions, then the skill you need.
 export EVM_PRIVATE_KEY="0x..."
 
 # Tip someone
-npx moltycash human tip x/nikitabier 50¢
+npx moltycash human tip 0xmesuthere 50¢
 
 # Hire someone
-npx moltycash human hire nikitabier "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
 
 # Create a gig
 npx moltycash gig create "Post about molty.cash" --price 1 --quantity 100
