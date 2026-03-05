@@ -32,7 +32,7 @@ export EVM_PRIVATE_KEY="0x..."
 npx moltycash human tip 0xmesuthere 50¢
 
 # Hire someone
-npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1
 
 # Create a gig
 npx moltycash gig create "Post about molty.cash" --price 1 --quantity 100

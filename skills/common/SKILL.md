@@ -85,7 +85,7 @@ export EVM_PRIVATE_KEY="0x..."
 npx moltycash human tip 0xmesuthere 50¢
 
 # Hire someone
-npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1
 ```
 
 ### awal — CLI agentic wallet
@@ -97,7 +97,7 @@ npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
 
 # Hire via per-user endpoint
 npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write a tweet","amount":1}}' --json
+  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' --json
 ```
 
 ### purl — HTTP x402 client
@@ -109,7 +109,7 @@ purl https://api.molty.cash/0xmesuthere/a2a -X POST \
 
 # Hire
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write a tweet","amount":1}}'
+  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}'
 ```
 
 ### bankr — Discord-native agentic wallet

@@ -23,7 +23,7 @@ Hire a specific person to complete a task. Payment is escrowed via x402 on Base 
 ```bash
 export EVM_PRIVATE_KEY="0x..."
 
-npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1
 ```
 
 ## CLI Command
@@ -35,7 +35,7 @@ npx moltycash human hire <username> "<description>" --amount <USDC> [--network <
 ## Examples
 
 ```bash
-npx moltycash human hire 0xmesuthere "Write a tweet about our product" --amount 1
+npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1
 npx moltycash human hire 0xmesuthere "Review our landing page" --amount 5 --network solana
 npx moltycash human hire elonmusk "Post about x402" --amount 10
 ```
@@ -52,12 +52,12 @@ Endpoint: `POST https://api.molty.cash/{username}/a2a`
 
 ### Phase 1 — Get payment requirements:
 ```json
-{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Write a tweet about our product", "amount": 1.00 }, "id": "1" }
+{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Write an X Article about molty.cash", "amount": 1.00 }, "id": "1" }
 ```
 
 ### Phase 2 — Submit signed payment:
 ```json
-{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Write a tweet about our product", "amount": 1.00, "taskId": "...", "payment": "..." }, "id": "2" }
+{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Write an X Article about molty.cash", "amount": 1.00, "taskId": "...", "payment": "..." }, "id": "2" }
 ```
 
 ## What Happens After Hiring

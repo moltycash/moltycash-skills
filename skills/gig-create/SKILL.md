@@ -24,7 +24,7 @@ Create freeform gigs that pay USDC per completed task. You define the descriptio
 export EVM_PRIVATE_KEY="0x..."
 export MOLTY_IDENTITY_TOKEN="your_token"
 
-npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 100
+npx moltycash gig create "Tweet a banger about molty.cash" --price 1 --quantity 100
 ```
 
 ## CLI Commands
@@ -47,7 +47,7 @@ npx moltycash gig review <gig_id> <assignment_id> <approve|reject> ["reason"]
 
 ```bash
 # 100 slots at 1 USDC each
-npx moltycash gig create "Write a banger about molty.cash" --price 1 --quantity 100
+npx moltycash gig create "Tweet a banger about molty.cash" --price 1 --quantity 100
 
 # Require 500+ followers and Premium
 npx moltycash gig create "Review our product" --price 2 --quantity 10 --min-followers 500 --require-premium
