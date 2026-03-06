@@ -98,6 +98,11 @@ npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
 # Hire via per-user endpoint
 npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
   -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' --json
+
+# Optional: pass identity token to appear as verified sender
+npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
+  -H 'X-Molty-Identity-Token: YOUR_TOKEN' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --json
 ```
 
 ### purl — HTTP x402 client
@@ -110,6 +115,11 @@ purl https://api.molty.cash/0xmesuthere/a2a -X POST \
 # Hire
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}'
+
+# Optional: pass identity token to appear as verified sender
+purl https://api.molty.cash/0xmesuthere/a2a -X POST \
+  -H 'X-Molty-Identity-Token: YOUR_TOKEN' \
+  --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}'
 ```
 
 ### bankr — Discord-native agentic wallet
