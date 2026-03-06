@@ -108,6 +108,8 @@ npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
 ### purl — HTTP x402 client
 
 ```bash
+export PURL_PASSWORD="your_wallet_password"  # skip interactive prompt
+
 # Tip
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}'
