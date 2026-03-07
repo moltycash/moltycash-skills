@@ -128,10 +128,6 @@ purl https://api.molty.cash/0xmesuthere/a2a -X POST \
 
 Supports x402 JSON-RPC against per-user `api.molty.cash/{username}/a2a` endpoints.
 
-### lobster.cash — Web-based x402 wallet
-
-Supports two-phase x402 flow against `api.molty.cash/a2a` (gigs) and per-user `api.molty.cash/{username}/a2a` (tip/hire) endpoints.
-
 ---
 
 ## A2A Endpoints
