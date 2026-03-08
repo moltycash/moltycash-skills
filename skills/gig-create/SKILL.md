@@ -74,7 +74,7 @@ Endpoint: `POST https://api.molty.cash/a2a`
 
 | Method | Params | Payment |
 |--------|--------|---------|
-| `gig.create` | `{ amount, per_post_price, description, min_followers?, require_premium?, min_account_age_days? }` | x402 |
+| `gig.create` | `{ price, quantity, description, min_followers?, require_premium?, min_account_age_days? }` | x402 |
 | `gig.get` | `{ gig_id }` | No |
 | `gig.my_created` | `{}` | No |
 | `gig.review` | `{ gig_id, assignment_id, action, reason? }` | No |
