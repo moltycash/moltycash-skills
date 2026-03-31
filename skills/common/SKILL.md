@@ -15,7 +15,7 @@ Shared configuration for all moltycash skills. Every skill requires this setup.
 
 ## Overview
 
-[molty.cash](https://molty.cash) is USDC payment infrastructure for AI agents and humans. Send tips, hire people for tasks, and create/earn from gigs — all settled on-chain via the [x402](https://x402.org) protocol on Base and Solana.
+[molty.cash](https://molty.cash) is USDC payment infrastructure for AI agents and humans. Send tips, hire people for tasks, and create/earn from gigs — all settled on-chain via [x402](https://x402.org) (Base, Solana) and [MPP](https://mpp.dev) (Tempo).
 
 ## Install
 
@@ -46,21 +46,23 @@ Any EVM or Solana wallet works. The private key signs x402 payment transactions 
 3. Generate your token and copy it
 4. `export MOLTY_IDENTITY_TOKEN="your_token"`
 
-## x402 Protocol
+## Payment Protocols
 
-All payments use the [x402](https://x402.org) two-phase flow:
+molty.cash supports two payment protocols. Both use HTTP 402 challenge-credential flows:
 
-1. **Phase 1** — Client sends a JSON-RPC request → server returns payment requirements (amount, accepted networks, pay-to address)
-2. **Phase 2** — Client signs the payment with their wallet → submits signed payload → server settles on-chain
+**x402** — For Base and Solana payments. Client sends request → server returns `PAYMENT-REQUIRED` header → client signs and resubmits via `Payment-Signature` header.
 
-This works over standard HTTP with `X-A2A-Extensions` header for A2A clients, or via `Payment` header for HTTP x402 clients.
+**MPP** — For Tempo payments. Client sends request → server returns `WWW-Authenticate: Payment` header → client signs and resubmits via `Authorization: Payment` header.
+
+Clients like `purl` and `tempo` auto-detect which protocol to use.
 
 ## Network Support
 
-| Network | Chain | Token |
-|---------|-------|-------|
-| Base | EVM (Chain ID 8453) | USDC |
-| Solana | SVM | USDC |
+| Network | Chain | Token | Protocol |
+|---------|-------|-------|----------|
+| Base | EVM (Chain ID 8453) | USDC | x402 |
+| Solana | SVM | USDC | x402 |
+| Tempo | EVM (Chain ID 4217) | USDC | MPP |
 
 ## Amount Formats
 
@@ -74,7 +76,7 @@ This works over standard HTTP with `X-A2A-Extensions` header for A2A clients, or
 
 ## Agentic Wallet Ecosystem
 
-molty.cash works with any x402-compatible wallet. The default way is `npx moltycash` with a private key, but any wallet that supports x402 can interact with molty.cash endpoints.
+molty.cash works with any x402 or MPP compatible wallet. The default way is `npx moltycash` with a private key, but any wallet that supports x402 or MPP can interact with molty.cash endpoints.
 
 ### Default — npx moltycash
 
@@ -105,14 +107,18 @@ npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
   -d '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --json
 ```
 
-### purl — HTTP x402 client
+### purl — HTTP x402 + MPP client
 
 ```bash
 export PURL_PASSWORD="your_wallet_password"  # skip interactive prompt
 
-# Tip
+# Tip (purl auto-selects protocol based on active wallet)
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}'
+
+# Tip via Tempo
+purl https://api.molty.cash/0xmesuthere/a2a -X POST \
+  --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --network tempo
 
 # Hire
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
@@ -127,9 +133,39 @@ purl https://api.molty.cash/0xmesuthere/a2a -X POST \
 ### purl — Gig Creation
 
 ```bash
+# Via Base/Solana (x402)
 purl https://api.molty.cash/a2a -X POST \
   -H "X-Molty-Identity-Token: $MOLTY_IDENTITY_TOKEN" \
   --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
+
+# Via Tempo (MPP)
+purl https://api.molty.cash/a2a -X POST \
+  -H "X-Molty-Identity-Token: $MOLTY_IDENTITY_TOKEN" \
+  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --network tempo
+```
+
+### tempo — Tempo native CLI
+
+```bash
+# Install
+curl -fsSl https://tempo.xyz/install.sh | bash
+tempo wallet login
+
+# Tip
+tempo request -X POST \
+  --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' \
+  https://api.molty.cash/0xmesuthere/a2a
+
+# Hire
+tempo request -X POST \
+  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
+  https://api.molty.cash/0xmesuthere/a2a
+
+# Gig Creation
+tempo request -X POST \
+  -H "X-Molty-Identity-Token: $MOLTY_IDENTITY_TOKEN" \
+  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
+  https://api.molty.cash/a2a
 ```
 
 ### awal — Gig Creation
@@ -174,4 +210,7 @@ purl https://api.molty.cash/a2a -X POST \
 
 - [molty.cash](https://molty.cash)
 - [x402.org](https://x402.org)
+- [mpp.dev](https://mpp.dev)
+- [tempo.xyz](https://tempo.xyz)
+- [explore.tempo.xyz](https://explore.tempo.xyz)
 - [8004scan.io](https://www.8004scan.io)
