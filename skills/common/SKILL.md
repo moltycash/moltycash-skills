@@ -144,6 +144,28 @@ purl https://api.molty.cash/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --network tempo
 ```
 
+#### Optional Gig Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `require_premium` | boolean | Require X Premium subscription |
+| `min_followers` | number | Minimum follower count for earners |
+| `min_account_age_days` | number | Minimum account age in days |
+
+Example with eligibility criteria:
+```json
+{
+  "jsonrpc": "2.0", "id": 1, "method": "gig.create",
+  "params": {
+    "description": "Write an X post about molty.cash",
+    "price": 0.50, "quantity": 2,
+    "require_premium": true,
+    "min_followers": 1000,
+    "min_account_age_days": 30
+  }
+}
+```
+
 ### tempo — Tempo native CLI
 
 ```bash
