@@ -194,9 +194,9 @@ bankr x402 call https://api.molty.cash/igoryuzo/a2a \
   --method POST \
   --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.10}}'
 
-# Hire
+# Hire ($1.00 + 3% fee = $1.03, needs --max-payment)
 bankr x402 call https://api.molty.cash/igoryuzo/a2a \
-  --method POST \
+  --method POST --max-payment 1.03 \
   --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"amount":1.00,"description":"explain how bankr and MoltyCash integration works in a post","identity_token":"'$MOLTY_IDENTITY_TOKEN'"}}'
 
 # Optional: pass identity token to appear as verified sender
