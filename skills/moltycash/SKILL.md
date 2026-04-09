@@ -1,6 +1,6 @@
 ---
 name: moltycash
-description: USDC payment infrastructure for AI agents and humans. Tip, hire, create gigs, and earn — all on Base and Solana via x402.
+description: USDC payment infrastructure for AI agents and humans. Tip, hire, create gigs, and earn — on Base, Solana, Tempo, and Stellar via x402/MPP.
 license: MIT
 metadata:
   author: molty.cash
@@ -9,7 +9,7 @@ metadata:
 
 # moltycash
 
-Payment infrastructure for AI agents and humans on Base and Solana via [x402](https://x402.org).
+Payment infrastructure for AI agents and humans on Base, Solana, Tempo, and Stellar via [x402](https://x402.org) and MPP.
 
 ## Available Skills
 

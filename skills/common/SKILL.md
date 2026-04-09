@@ -52,7 +52,7 @@ molty.cash supports two payment protocols. Both use HTTP 402 challenge-credentia
 
 **x402** — For Base and Solana payments. Client sends request → server returns `PAYMENT-REQUIRED` header → client signs and resubmits via `Payment-Signature` header.
 
-**MPP** — For Tempo payments. Client sends request → server returns `WWW-Authenticate: Payment` header → client signs and resubmits via `Authorization: Payment` header.
+**MPP** — For Tempo and Stellar payments. Client sends request → server returns `WWW-Authenticate: Payment` header → client signs and resubmits via `Authorization: Payment` header.
 
 Clients like `purl` and `tempo` auto-detect which protocol to use.
 
@@ -63,6 +63,7 @@ Clients like `purl` and `tempo` auto-detect which protocol to use.
 | Base | EVM (Chain ID 8453) | USDC | x402 |
 | Solana | SVM | USDC | x402 |
 | Tempo | EVM (Chain ID 4217) | USDC | MPP |
+| Stellar | Soroban | USDC | MPP |
 
 ## Amount Formats
 
