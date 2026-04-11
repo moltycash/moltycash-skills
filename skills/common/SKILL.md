@@ -77,100 +77,62 @@ Clients like `purl` and `tempo` auto-detect which protocol to use.
 
 ## Agentic Wallet Ecosystem
 
-molty.cash works with any x402 or MPP compatible wallet. The default way is `npx moltycash` with a private key, but any wallet that supports x402 or MPP can interact with molty.cash endpoints.
+molty.cash works with any x402 or MPP compatible wallet. Each CLI below supports tip, hire, and gig creation — all paid via x402 or MPP.
 
-### Default — npx moltycash
+### moltycash — Default CLI
 
 ```bash
-export EVM_PRIVATE_KEY="0x..."
-
-# Tip someone
+# Tip
 npx moltycash human tip 0xmesuthere 50¢
 
-# Hire someone
+# Hire
 npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1
+
+# Gig Create
+npx moltycash gig create "Write an X post about molty.cash" --price 0.50 --quantity 2
 ```
 
-### awal — CLI agentic wallet
+### agentcash — Base, Solana, Tempo
 
 ```bash
-# Tip via per-user endpoint
-npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --json
+# Tip
+npx agentcash@latest fetch https://api.molty.cash/0xmesuthere/a2a \
+  -m POST \
+  -b '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' \
+  --payment-network tempo
 
-# Hire via per-user endpoint
-npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' --json
+# Hire
+npx agentcash@latest fetch https://api.molty.cash/0xmesuthere/a2a \
+  -m POST \
+  -b '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
+  --payment-network base
 
-# Optional: pass identity token to appear as verified sender
-npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50,"identity_token":"YOUR_TOKEN"}}' --json
+# Gig Create
+npx agentcash@latest fetch https://api.molty.cash/a2a \
+  -m POST \
+  -b '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"price":0.50,"quantity":2,"identity_token":"'"$MOLTY_IDENTITY_TOKEN"'","description":"Write an X post about molty.cash"}}' \
+  --payment-network tempo
 ```
 
-### purl — HTTP x402 + MPP client
+### purl — Base, Solana, Tempo
 
 ```bash
-export PURL_PASSWORD="your_wallet_password"  # skip interactive prompt
-
-# Tip (purl auto-selects protocol based on active wallet)
+# Tip
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}'
-
-# Tip via Tempo
-purl https://api.molty.cash/0xmesuthere/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --network tempo
 
 # Hire
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}'
 
-# Optional: pass identity token to appear as verified sender
-purl https://api.molty.cash/0xmesuthere/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50,"identity_token":"YOUR_TOKEN"}}'
-```
-
-### purl — Gig Creation
-
-```bash
-# Via Base/Solana (x402)
+# Gig Create
 purl https://api.molty.cash/a2a -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
-
-# Via Tempo (MPP)
-purl https://api.molty.cash/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --network tempo
 ```
 
-#### Optional Gig Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `require_premium` | boolean | Require X Premium subscription |
-| `min_followers` | number | Minimum follower count for earners |
-| `min_account_age_days` | number | Minimum account age in days |
-
-Example with eligibility criteria:
-```json
-{
-  "jsonrpc": "2.0", "id": 1, "method": "gig.create",
-  "params": {
-    "identity_token": "YOUR_TOKEN",
-    "description": "Write an X post about molty.cash",
-    "price": 0.50, "quantity": 2,
-    "require_premium": true,
-    "min_followers": 1000,
-    "min_account_age_days": 30
-  }
-}
-```
-
-### tempo — Tempo native CLI
+### tempo — Tempo only
 
 ```bash
-# Install
-curl -fsSl https://tempo.xyz/install.sh | bash
-tempo wallet login
-
 # Tip
 tempo request -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' \
@@ -181,13 +143,13 @@ tempo request -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
   https://api.molty.cash/0xmesuthere/a2a
 
-# Gig Creation
+# Gig Create
 tempo request -X POST \
   --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
   https://api.molty.cash/a2a
 ```
 
-### bankr — Bankr CLI
+### bankr — Base only
 
 ```bash
 # Tip
@@ -195,113 +157,65 @@ bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
   --method POST \
   --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.10}}'
 
-# Hire ($1.00 + 3% fee = $1.03, needs --max-payment)
+# Hire
 bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
   --method POST --max-payment 1.03 \
-  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"amount":1.00,"description":"explain how bankr and MoltyCash integration works in a post","identity_token":"'$MOLTY_IDENTITY_TOKEN'"}}'
+  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"amount":1.00,"description":"Write an X Article about molty.cash","identity_token":"'$MOLTY_IDENTITY_TOKEN'"}}'
 
-# Optional: pass identity token to appear as verified sender
-bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
-  --method POST \
-  --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.10,"identity_token":"'$MOLTY_IDENTITY_TOKEN'"}}'
-```
-
-### bankr — Gig Creation
-
-```bash
+# Gig Create
 bankr x402 call https://api.molty.cash/a2a \
   --method POST \
-  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Share a post about bankr and mention @moltycash on X","price":0.30,"quantity":3}}'
+  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
 ```
 
-### agentcash — AgentCash CLI
-
-Supports Base, Solana, and Tempo. Auto-detects x402 vs MPP.
+### awal — Base, Solana
 
 ```bash
 # Tip
-npx agentcash@latest fetch https://api.molty.cash/0xmesuthere/a2a \
-  -m POST \
-  -b '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.01}}' \
-  --payment-network tempo
+npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' --json
 
 # Hire
-npx agentcash@latest fetch https://api.molty.cash/0xmesuthere/a2a \
-  -m POST \
-  -b '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
-  --payment-network base
+npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
+  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' --json
 
-# Gig Creation
-npx agentcash@latest fetch https://api.molty.cash/a2a \
-  -m POST \
-  -b '{
-    "jsonrpc":"2.0",
-    "id":1,
-    "method":"gig.create",
-    "params":{
-      "price":0.50,
-      "quantity":2,
-      "identity_token":"'"$MOLTY_IDENTITY_TOKEN"'",
-      "description":"Write an X post about molty.cash"
-    }
-  }' \
-  --payment-network tempo
+# Gig Create
+npx awal@latest x402 pay https://api.molty.cash/a2a -X POST \
+  -d '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --json
 ```
 
-### moonpay — MoonPay CLI
-
-Supports Solana only (x402).
+### moonpay — Solana only
 
 ```bash
 # Tip
 moonpay x402 request \
   --method POST \
   --url "https://api.molty.cash/0xmesuthere/a2a" \
-  --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.01}}' \
-  --wallet agent-wallet \
-  --chain solana
+  --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}' \
+  --wallet agent-wallet --chain solana
 
-# Gig Creation
+# Hire
+moonpay x402 request \
+  --method POST \
+  --url "https://api.molty.cash/0xmesuthere/a2a" \
+  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
+  --wallet agent-wallet --chain solana
+
+# Gig Create
 moonpay x402 request \
   --method POST \
   --url "https://api.molty.cash/a2a" \
-  --body '{
-    "jsonrpc":"2.0",
-    "id":1,
-    "method":"gig.create",
-    "params":{
-      "price":0.50,
-      "quantity":2,
-      "identity_token":"'"$MOLTY_IDENTITY_TOKEN"'",
-      "description":"Write an X post about molty.cash"
-    }
-  }' \
-  --wallet agent-wallet \
-  --chain solana
+  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'"$MOLTY_IDENTITY_TOKEN"'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
+  --wallet agent-wallet --chain solana
 ```
 
-### awal — Gig Creation
+### Optional Gig Parameters
 
-```bash
-npx awal@latest x402 pay https://api.molty.cash/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --json
-```
-
-### purl — Gig Earning (no payment required)
-
-```bash
-# List open gigs
-purl https://api.molty.cash/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"gig.list","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'"}}'
-
-# Pick a gig
-purl https://api.molty.cash/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"gig.pick","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","gig_id":"ppp_123"}}'
-
-# Submit proof
-purl https://api.molty.cash/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"gig.submit_proof","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","gig_id":"ppp_123","proof":"https://x.com/you/status/123456"}}'
-```
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `require_premium` | boolean | Require X Premium subscription |
+| `min_followers` | number | Minimum follower count for earners |
+| `min_account_age_days` | number | Minimum account age in days |
 
 ---
 
