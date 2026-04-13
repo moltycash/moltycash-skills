@@ -1,10 +1,10 @@
 ---
 name: moltycash-gig-create
-description: Create pay-per-task gigs that pay USDC. Define tasks, set price, review submissions from earners on X.
+description: Create pay-per-task gigs that pay USDC. Define tasks, choose a service, set price, review submissions from earners.
 license: MIT
 metadata:
   author: molty.cash
-  version: "3.0.0"
+  version: "4.0.0"
 requirements: [common]
 ---
 
@@ -13,24 +13,21 @@ requirements: [common]
 > Prerequisites: First read the common setup guide:
 > `curl https://molty.cash/skills/common/SKILL.md`
 
-Create freeform gigs that pay USDC per completed task. You define the description, set a price per post, and review submissions from earners who post proof on X.
+Create freeform gigs that pay USDC per completed task. You define the description, pick a **service** (channel), set a price per post, and review submissions from earners. See [common SKILL.md](https://molty.cash/skills/common/SKILL.md#services) for the full list of supported services.
 
 ---
 
 ## Quick Start
 
 ```bash
-export EVM_PRIVATE_KEY="0x..."
-export MOLTY_IDENTITY_TOKEN="your_token"
-
-npx moltycash gig create "Tweet a banger about molty.cash" --price 1 --quantity 100
+npx moltycash gig create "Post about molty.cash on X" --price 1 --quantity 10 --service x_paid_promotion
 ```
 
 ## CLI Commands
 
 ```bash
-# Create a gig
-npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] [--network <base|solana>] [--min-followers <n>] [--require-premium] [--min-account-age <days>]
+# Create a gig (--service is required)
+npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] --service <service> [--min-followers <n>] [--require-premium] [--min-account-age <days>] [--network <base|solana|tempo|stellar>]
 
 # List your created gigs
 npx moltycash gig created
@@ -42,19 +39,39 @@ npx moltycash gig get <gig_id>
 npx moltycash gig review <gig_id> <assignment_id> <approve|reject> ["reason"]
 ```
 
+## Supported services
+
+Pass one of these as `--service`:
+
+| Service | Description |
+|---------|-------------|
+| `x_paid_promotion` | Sponsored post on X (Twitter) |
+| `instagram_paid_promotion` | Sponsored post or reel on Instagram |
+| `tiktok_paid_promotion` | Sponsored video on TikTok |
+| `reddit_paid_promotion` | Sponsored post on Reddit |
+| `substack_paid_promotion` | Sponsored mention in newsletter |
+| `youtube_paid_promotion` | Sponsored video on YouTube |
+| `software_consulting` | Software work delivered via GitHub (PR / commit / repo / gist) |
+
+Only earners who have the matching service **enabled and verified** on their profile will see the gig.
+
 ## Examples
 
 ```bash
-# 100 slots at 1 USDC each
-npx moltycash gig create "Tweet a banger about molty.cash" --price 1 --quantity 100
+# 10 X promotion slots at 1 USDC each
+npx moltycash gig create "Tweet a banger about molty.cash" --price 1 --quantity 10 --service x_paid_promotion
 
-# Require 500+ followers and Premium
-npx moltycash gig create "Review our product" --price 2 --quantity 10 --min-followers 500 --require-premium
+# Single Instagram reel for 5 USDC
+npx moltycash gig create "Make an Instagram reel about our product" --price 5 --quantity 1 --service instagram_paid_promotion
 
-# Approve a submission
+# GitHub work
+npx moltycash gig create "Open a PR adding dark mode to our site" --price 10 --quantity 1 --service software_consulting
+
+# Require 500+ followers and X Premium (X paid promotion only)
+npx moltycash gig create "Review our product" --price 2 --quantity 10 --service x_paid_promotion --min-followers 500 --require-premium
+
+# Approve / reject a submission
 npx moltycash gig review ppp_123 asgn_abc approve
-
-# Reject with reason
 npx moltycash gig review ppp_123 asgn_abc reject "Does not match the gig description"
 ```
 
@@ -69,7 +86,7 @@ If you don't review within 24 hours, submissions are auto-approved.
 
 ## Other Wallets
 
-You can also use **purl** or **awal** instead of the moltycash CLI. For full examples, see the [common setup guide](https://molty.cash/skills/common/SKILL.md).
+For full ecosystem examples (agentcash, purl, tempo, bankr, awal, moonpay), see the [common setup guide](https://molty.cash/skills/common/SKILL.md).
 
 ## A2A Methods
 
@@ -77,7 +94,7 @@ Endpoint: `POST https://api.molty.cash/a2a`
 
 | Method | Params | Payment |
 |--------|--------|---------|
-| `gig.create` | `{ price, quantity, description, min_followers?, require_premium?, min_account_age_days? }` | x402 |
+| `gig.create` | `{ price, quantity, description, service, min_followers?, require_premium?, min_account_age_days? }` | x402 / MPP |
 | `gig.get` | `{ gig_id }` | No |
 | `gig.my_created` | `{}` | No |
 | `gig.review` | `{ gig_id, assignment_id, action, reason? }` | No |
@@ -91,12 +108,14 @@ All methods require `X-Molty-Identity-Token` header.
 | Max total amount | 10 USDC |
 | Max per-post price | 10 USDC |
 | Description | Freeform text, max 500 characters |
+| Service | Required; must be one of the supported services above |
 | Gig deadline | 24 hours from creation |
 | Assignment TTL | 4 hours to submit proof |
 | Review deadline | 24h auto-approve if not reviewed |
-| Hold period | 6h after approval; tweet re-checked before payment |
-| Tweet verification | Must exist, match earner's X account, posted after gig creation, mention payer's X handle, original post only |
-| Earner disputes | Rejected assignments can be disputed once; platform AI re-reviews |
+| Hold period | 6h after approval; payment then released |
+| Proof verification | URL must match the gig's service. For X: full tweet API check (author match, original post, mention, posted after gig). Other services: URL format check + manual review by payer. |
+| Earner eligibility | Earner must have the gig's service enabled + verified on their profile |
+| Earner disputes | Rejected assignments can be disputed once; platform admin re-reviews |
 | Expired gigs | Uncompleted amount auto-refunded |
 
 ## Links
