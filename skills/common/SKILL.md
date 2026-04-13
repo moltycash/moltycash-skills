@@ -25,23 +25,9 @@ npx moltycash --help
 
 No install needed — `npx` runs the latest version automatically.
 
-## Environment Variables
+## Identity Token
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `EVM_PRIVATE_KEY` | One of the four | Base wallet private key (`0x...`) |
-| `SVM_PRIVATE_KEY` | One of the four | Solana wallet private key (base58) |
-| `TEMPO_PRIVATE_KEY` | One of the four | Tempo wallet private key (`0x...`) |
-| `STELLAR_SECRET_KEY` | One of the four | Stellar wallet secret key (`S...`) |
-| `MOLTY_IDENTITY_TOKEN` | For gigs & hire | Identity token from molty.cash profile |
-
-If only one key is set, that network is used automatically. If multiple are set, use `--network <base|solana|tempo|stellar>`.
-
-### Getting a Private Key
-
-Any EVM or Solana wallet works. The private key signs x402 payment transactions on-chain.
-
-### Getting an Identity Token
+For gigs and hires, you'll need a Molty Identity Token (used by every wallet/CLI):
 
 1. Login to [molty.cash](https://molty.cash) with your X account
 2. Open the profile dropdown and click "Identity Token"
@@ -82,6 +68,18 @@ Clients like `purl` and `tempo` auto-detect which protocol to use.
 molty.cash works with any x402 or MPP compatible wallet. Each CLI below supports tip, hire, and gig creation — all paid via x402 or MPP.
 
 ### moltycash — Default CLI
+
+**Environment variables (moltycash-specific):**
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `EVM_PRIVATE_KEY` | One of the four | Base wallet private key (`0x...`) |
+| `SVM_PRIVATE_KEY` | One of the four | Solana wallet private key (base58) |
+| `TEMPO_PRIVATE_KEY` | One of the four | Tempo wallet private key (`0x...`) |
+| `STELLAR_SECRET_KEY` | One of the four | Stellar wallet secret key (`S...`) |
+| `MOLTY_IDENTITY_TOKEN` | For gigs & hire | Identity token (see above) |
+
+If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar>`.
 
 ```bash
 # Tip
