@@ -6,7 +6,6 @@ metadata:
   author: molty.cash
   version: "3.0.0"
 requirements: [common]
-compatibility: Requires EVM_PRIVATE_KEY (Base) or SVM_PRIVATE_KEY (Solana) and MOLTY_IDENTITY_TOKEN.
 ---
 
 # gig-create

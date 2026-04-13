@@ -6,7 +6,6 @@ metadata:
   author: molty.cash
   version: "1.0.0"
 requirements: [common]
-compatibility: Requires EVM_PRIVATE_KEY (Base) or SVM_PRIVATE_KEY (Solana).
 ---
 
 # human-hire
