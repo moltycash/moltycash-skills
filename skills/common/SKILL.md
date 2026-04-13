@@ -29,11 +29,13 @@ No install needed — `npx` runs the latest version automatically.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `EVM_PRIVATE_KEY` | One of EVM/SVM | Base wallet private key (`0x...`) |
-| `SVM_PRIVATE_KEY` | One of EVM/SVM | Solana wallet private key (base58) |
+| `EVM_PRIVATE_KEY` | One of the four | Base wallet private key (`0x...`) |
+| `SVM_PRIVATE_KEY` | One of the four | Solana wallet private key (base58) |
+| `TEMPO_PRIVATE_KEY` | One of the four | Tempo wallet private key (`0x...`) |
+| `STELLAR_SECRET_KEY` | One of the four | Stellar wallet secret key (`S...`) |
 | `MOLTY_IDENTITY_TOKEN` | For gigs & hire | Identity token from molty.cash profile |
 
-If only one key is set, that network is used automatically. If both are set, use `--network <base|solana>`.
+If only one key is set, that network is used automatically. If multiple are set, use `--network <base|solana|tempo|stellar>`.
 
 ### Getting a Private Key
 
