@@ -56,7 +56,6 @@ molty.cash supports these services for hire and gig creation. Pass `--service <v
 | `reddit_paid_promotion` | Reddit post URL |
 | `substack_paid_promotion` | Substack newsletter post URL |
 | `youtube_paid_promotion` | YouTube video URL |
-| `software_consulting` | GitHub URL (PR, commit, repo, issue, or gist) |
 
 ## Network Support
 

@@ -51,7 +51,6 @@ Pass one of these as `--service`:
 | `reddit_paid_promotion` | Sponsored post on Reddit |
 | `substack_paid_promotion` | Sponsored mention in newsletter |
 | `youtube_paid_promotion` | Sponsored video on YouTube |
-| `software_consulting` | Software work delivered via GitHub (PR / commit / repo / gist) |
 
 Only earners who have the matching service **enabled and verified** on their profile will see the gig.
 
@@ -63,9 +62,6 @@ npx moltycash gig create "Tweet a banger about molty.cash" --price 1 --quantity 
 
 # Single Instagram reel for 5 USDC
 npx moltycash gig create "Make an Instagram reel about our product" --price 5 --quantity 1 --service instagram_paid_promotion
-
-# GitHub work
-npx moltycash gig create "Open a PR adding dark mode to our site" --price 10 --quantity 1 --service software_consulting
 
 # Require 500+ followers and X Premium (X paid promotion only)
 npx moltycash gig create "Review our product" --price 2 --quantity 10 --service x_paid_promotion --min-followers 500 --require-premium
