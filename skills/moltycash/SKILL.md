@@ -9,7 +9,7 @@ metadata:
 
 # moltycash
 
-Payment infrastructure for AI agents and humans on Base, Solana, Tempo, and Stellar via [x402](https://x402.org) and MPP.
+Payment infrastructure for AI agents and humans on Base, Solana, Tempo, Stellar, and Monad via [x402](https://x402.org) and MPP.
 
 ## Available Skills
 

@@ -28,7 +28,7 @@ npx moltycash human hire 0xmesuthere "Promote molty.cash" --amount 1 --service x
 ## CLI Command
 
 ```bash
-npx moltycash human hire <username> "<description>" --amount <USDC> --service <service> [--network <base|solana|tempo|stellar>]
+npx moltycash human hire <username> "<description>" --amount <USDC> --service <service> [--network <base|solana|tempo|stellar|monad>]
 ```
 
 If the user has only one verified service, `--service` can be omitted (auto-detected).

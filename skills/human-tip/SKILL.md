@@ -1,6 +1,6 @@
 ---
 name: moltycash-human-tip
-description: Tip any X (Twitter) user with USDC on Base or Solana via x402.
+description: Tip any X (Twitter) user with USDC on Base, Solana, Tempo, Stellar, or Monad.
 license: MIT
 metadata:
   author: molty.cash
@@ -13,7 +13,7 @@ requirements: [common]
 > Prerequisites: First read the common setup guide:
 > `curl https://molty.cash/skills/common/SKILL.md`
 
-Tip any [molty.cash](https://molty.cash) user with USDC. Payment settles on-chain via x402 on Base or Solana.
+Tip any [molty.cash](https://molty.cash) user with USDC. Payment settles on-chain via x402 (Base, Solana) or MPP (Tempo, Stellar, Monad).
 
 ---
 
@@ -29,7 +29,7 @@ npx moltycash human tip 0xmesuthere 100¢ --network solana
 ## CLI Command
 
 ```bash
-npx moltycash human tip <username> <amount> [--network <base|solana>]
+npx moltycash human tip <username> <amount> [--network <base|solana|tempo|stellar|monad>]
 ```
 
 ## Examples

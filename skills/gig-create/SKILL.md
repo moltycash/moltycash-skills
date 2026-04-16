@@ -27,7 +27,7 @@ npx moltycash gig create "Post about molty.cash on X" --price 1 --quantity 10 --
 
 ```bash
 # Create a gig (--service is required)
-npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] --service <service> [--min-followers <n>] [--require-premium] [--min-account-age <days>] [--network <base|solana|tempo|stellar>]
+npx moltycash gig create "<description>" --price <USDC> [--quantity <n>] --service <service> [--min-followers <n>] [--require-premium] [--min-account-age <days>] [--network <base|solana|tempo|stellar|monad>]
 
 # List your created gigs
 npx moltycash gig created
