@@ -66,6 +66,7 @@ molty.cash supports these services for hire and gig creation. Pass `--service <v
 | Tempo | EVM (Chain ID 4217) | USDC | MPP |
 | Stellar | Soroban | USDC | MPP |
 | Monad | EVM (Chain ID 143) | USDC | MPP |
+| World Chain | EVM (Chain ID 480) | USDC | x402 |
 
 ## Amount Formats
 
@@ -87,13 +88,15 @@ molty.cash works with any x402 or MPP compatible wallet. Each CLI below supports
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `EVM_PRIVATE_KEY` | One of the four | Base wallet private key (`0x...`) |
-| `SVM_PRIVATE_KEY` | One of the four | Solana wallet private key (base58) |
-| `TEMPO_PRIVATE_KEY` | One of the four | Tempo wallet private key (`0x...`) |
-| `STELLAR_SECRET_KEY` | One of the four | Stellar wallet secret key (`S...`) |
+| `EVM_PRIVATE_KEY` | One of the six | Base wallet private key (`0x...`) |
+| `SVM_PRIVATE_KEY` | One of the six | Solana wallet private key (base58) |
+| `TEMPO_PRIVATE_KEY` | One of the six | Tempo wallet private key (`0x...`) |
+| `STELLAR_SECRET_KEY` | One of the six | Stellar wallet secret key (`S...`) |
+| `MONAD_PRIVATE_KEY` | One of the six | Monad wallet private key (`0x...`) |
+| `WORLDCHAIN_PRIVATE_KEY` | One of the six | World Chain wallet private key (`0x...`) |
 | `MOLTY_IDENTITY_TOKEN` | For gigs & hire | Identity token (see above) |
 
-If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar>`.
+If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar|monad|worldchain>`.
 
 ```bash
 # Tip

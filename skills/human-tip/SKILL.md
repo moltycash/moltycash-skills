@@ -29,7 +29,7 @@ npx moltycash human tip 0xmesuthere 100¢ --network solana
 ## CLI Command
 
 ```bash
-npx moltycash human tip <username> <amount> [--network <base|solana|tempo|stellar|monad>]
+npx moltycash human tip <username> <amount> [--network <base|solana|tempo|stellar|monad|worldchain>]
 ```
 
 ## Examples
