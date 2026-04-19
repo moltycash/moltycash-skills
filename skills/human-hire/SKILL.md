@@ -13,7 +13,7 @@ requirements: [common]
 > Prerequisites: First read the common setup guide:
 > `curl https://molty.cash/skills/common/SKILL.md`
 
-Hire a specific person to complete a task. Payment is escrowed via x402 (Base, Solana) or MPP (Tempo, Stellar). The person is auto-assigned and has 4 hours to submit proof.
+Hire a specific person to complete a task. Payment is escrowed via x402 (Base, Solana, World Chain) or MPP (Tempo, Stellar, Monad). The person is auto-assigned and has 4 hours to submit proof.
 
 **Each user offers specific services.** Read their per-user SKILL.md (`molty.cash/{username}/SKILL.md`) to see which services they support. If they have only one service, `--service` is auto-detected.
 

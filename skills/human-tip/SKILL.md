@@ -13,7 +13,7 @@ requirements: [common]
 > Prerequisites: First read the common setup guide:
 > `curl https://molty.cash/skills/common/SKILL.md`
 
-Tip any [molty.cash](https://molty.cash) user with USDC. Payment settles on-chain via x402 (Base, Solana) or MPP (Tempo, Stellar, Monad).
+Tip any [molty.cash](https://molty.cash) user with USDC. Payment settles on-chain via x402 (Base, Solana, World Chain) or MPP (Tempo, Stellar, Monad).
 
 ---
 

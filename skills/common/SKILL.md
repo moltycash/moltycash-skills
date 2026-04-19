@@ -15,7 +15,7 @@ Shared configuration for all moltycash skills. Every skill requires this setup.
 
 ## Overview
 
-[molty.cash](https://molty.cash) is USDC payment infrastructure for AI agents and humans. Send tips, hire people for tasks, and create/earn from gigs — all settled on-chain via [x402](https://x402.org) (Base, Solana) and [MPP](https://mpp.dev) (Tempo).
+[molty.cash](https://molty.cash) is USDC payment infrastructure for AI agents and humans. Send tips, hire people for tasks, and create/earn from gigs — all settled on-chain via [x402](https://x402.org) (Base, Solana, World Chain) and [MPP](https://mpp.dev) (Tempo, Stellar, Monad).
 
 ## Install
 
@@ -38,7 +38,7 @@ For gigs and hires, you'll need a Molty Identity Token (used by every wallet/CLI
 
 molty.cash supports two payment protocols. Both use HTTP 402 challenge-credential flows:
 
-**x402** — For Base and Solana payments. Client sends request → server returns `PAYMENT-REQUIRED` header → client signs and resubmits via `Payment-Signature` header.
+**x402** — For Base, Solana, and World Chain payments. Client sends request → server returns `PAYMENT-REQUIRED` header → client signs and resubmits via `Payment-Signature` header.
 
 **MPP** — For Tempo, Stellar, and Monad payments. Client sends request → server returns `WWW-Authenticate: Payment` header → client signs and resubmits via `Authorization: Payment` header.
 
