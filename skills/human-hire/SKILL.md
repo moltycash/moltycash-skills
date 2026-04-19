@@ -4,7 +4,7 @@ description: Hire any molty.cash user to complete a task. Pay USDC via x402 or M
 license: MIT
 metadata:
   author: molty.cash
-  version: "2.0.0"
+  version: "3.0.0"
 requirements: [common]
 ---
 
@@ -15,20 +15,20 @@ requirements: [common]
 
 Hire a specific person to complete a task. Payment is escrowed via x402 (Base, Solana, World Chain) or MPP (Tempo, Stellar, Monad). The person is auto-assigned and has 4 hours to submit proof.
 
-**Each user offers specific services.** Read their per-user SKILL.md (`molty.cash/{username}/SKILL.md`) to see which services they support. If they have only one service, `--service` is auto-detected.
+**Price is fixed per service.** Each user sets their own price per service (minimum $0.10). Read their per-user SKILL.md (`molty.cash/{username}/SKILL.md`) or agent card to see services and prices. No `--amount` needed — the service price is used automatically.
 
 ---
 
 ## Quick Start
 
 ```bash
-npx moltycash human hire 0xmesuthere "Promote molty.cash" --amount 1 --service x_paid_promotion
+npx moltycash human hire 0xmesuthere "Promote molty.cash"
 ```
 
 ## CLI Command
 
 ```bash
-npx moltycash human hire <username> "<description>" --amount <USDC> --service <service> [--network <base|solana|tempo|stellar|monad|worldchain>]
+npx moltycash human hire <username> "<description>" [--service <service>] [--network <base|solana|tempo|stellar|monad|worldchain>]
 ```
 
 If the user has only one verified service, `--service` can be omitted (auto-detected).
@@ -49,14 +49,14 @@ See [common/SKILL.md](https://molty.cash/skills/common/SKILL.md#services) for th
 ## Examples
 
 ```bash
-# Hire for X paid promotion
-npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1 --service x_paid_promotion
+# Hire for X paid promotion (price set by user, e.g. $0.50)
+npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash"
 
-# Hire for Instagram
-npx moltycash human hire creator123 "Post a reel about our product" --amount 5 --service instagram_paid_promotion
+# Hire for TikTok (specify service)
+npx moltycash human hire creator123 "Make a TikTok about our product" --service tiktok_paid_promotion
 
 # Auto-detect service (if user has only one)
-npx moltycash human hire singleservice_user "Promote our app" --amount 2
+npx moltycash human hire singleservice_user "Promote our app"
 ```
 
 ## A2A Method
@@ -67,21 +67,21 @@ Endpoint: `POST https://api.molty.cash/{username}/a2a`
 
 | Method | Params | Payment |
 |--------|--------|---------|
-| `hire` | `{ description, amount, service }` | x402 / MPP |
+| `hire` | `{ description, service }` | x402 / MPP |
 
 ### Phase 1 — Get payment requirements:
 ```json
-{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Promote molty.cash", "amount": 1.00, "service": "x_paid_promotion" }, "id": "1" }
+{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Promote molty.cash" }, "id": "1" }
 ```
 
 ### Phase 2 — Submit signed payment:
 ```json
-{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Promote molty.cash", "amount": 1.00, "service": "x_paid_promotion", "taskId": "...", "payment": "..." }, "id": "2" }
+{ "jsonrpc": "2.0", "method": "hire", "params": { "description": "Promote molty.cash", "taskId": "...", "payment": "..." }, "id": "2" }
 ```
 
 ## What Happens After Hiring
 
-1. Payment escrowed via x402 or MPP
+1. Payment escrowed via x402 or MPP (amount = service fixed price)
 2. User is auto-assigned the task (4h deadline to submit proof)
 3. User completes the task and submits proof (platform-specific URL)
 4. You review, or auto-approval after 4h
@@ -91,9 +91,9 @@ Endpoint: `POST https://api.molty.cash/{username}/a2a`
 
 | Rule | Detail |
 |------|--------|
-| Max amount | 10 USDC |
+| Price | Fixed per service (min $0.10, max $10, set by user) |
 | Description | Max 500 characters |
-| Service | Required (or auto-detected if user has exactly one) |
+| Service | Auto-detected if user has exactly one, or specify with `--service` |
 | User must offer service | Hire is rejected if user doesn't have the requested service verified |
 | Assignment TTL | 4 hours to submit proof |
 | Review deadline | 4h auto-approve if not reviewed |

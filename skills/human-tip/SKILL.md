@@ -59,7 +59,7 @@ Endpoint: `POST https://api.molty.cash/{username}/a2a`
 
 ## Verified Sender (Optional)
 
-Include `MOLTY_IDENTITY_TOKEN` to appear as a verified sender in the recipient's transaction history.
+`MOLTY_IDENTITY_TOKEN` is optional. If set, you appear as a verified sender in the recipient's transaction history.
 
 ## Per-user Resources
 

@@ -103,7 +103,7 @@ If only one key is set, that network is used automatically. If multiple are set,
 npx moltycash human tip 0xmesuthere 50¢
 
 # Hire
-npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash" --amount 1
+npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash"
 
 # Gig Create
 npx moltycash gig create "Write an X post about molty.cash" --price 0.50 --quantity 2
@@ -121,13 +121,13 @@ npx agentcash@latest fetch https://api.molty.cash/0xmesuthere/a2a \
 # Hire
 npx agentcash@latest fetch https://api.molty.cash/0xmesuthere/a2a \
   -m POST \
-  -b '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
+  -b '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}' \
   --payment-network base
 
 # Gig Create
 npx agentcash@latest fetch https://api.molty.cash/a2a \
   -m POST \
-  -b '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"price":0.50,"quantity":2,"identity_token":"'"$MOLTY_IDENTITY_TOKEN"'","description":"Write an X post about molty.cash"}}' \
+  -b '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"price":0.50,"quantity":2,"description":"Write an X post about molty.cash"}}' \
   --payment-network tempo
 ```
 
@@ -140,11 +140,11 @@ purl https://api.molty.cash/0xmesuthere/a2a -X POST \
 
 # Hire
 purl https://api.molty.cash/0xmesuthere/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}'
+  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}'
 
 # Gig Create
 purl https://api.molty.cash/a2a -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
+  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
 ```
 
 ### tempo — Tempo only
@@ -157,12 +157,12 @@ tempo request -X POST \
 
 # Hire
 tempo request -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
+  --json '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}' \
   https://api.molty.cash/0xmesuthere/a2a
 
 # Gig Create
 tempo request -X POST \
-  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
+  --json '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
   https://api.molty.cash/a2a
 ```
 
@@ -177,12 +177,12 @@ bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
 # Hire
 bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
   --method POST --max-payment 1.03 \
-  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"amount":1.00,"description":"Write an X Article about molty.cash","identity_token":"'$MOLTY_IDENTITY_TOKEN'"}}'
+  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}'
 
 # Gig Create
 bankr x402 call https://api.molty.cash/a2a \
   --method POST \
-  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
+  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
 ```
 
 ### awal — Base, Solana
@@ -194,11 +194,11 @@ npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
 
 # Hire
 npx awal@latest x402 pay https://api.molty.cash/0xmesuthere/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' --json
+  -d '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}' --json
 
 # Gig Create
 npx awal@latest x402 pay https://api.molty.cash/a2a -X POST \
-  -d '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'$MOLTY_IDENTITY_TOKEN'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --json
+  -d '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' --json
 ```
 
 ### moonpay — Solana only
@@ -215,14 +215,14 @@ moonpay x402 request \
 moonpay x402 request \
   --method POST \
   --url "https://api.molty.cash/0xmesuthere/a2a" \
-  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash","amount":1}}' \
+  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}' \
   --wallet agent-wallet --chain solana
 
 # Gig Create
 moonpay x402 request \
   --method POST \
   --url "https://api.molty.cash/a2a" \
-  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"identity_token":"'"$MOLTY_IDENTITY_TOKEN"'","description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
+  --body '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}' \
   --wallet agent-wallet --chain solana
 ```
 
