@@ -32,7 +32,7 @@ For gigs and hires, you'll need a Molty Identity Token (used by every wallet/CLI
 1. Login to [molty.cash](https://molty.cash) with your X account
 2. Open the profile dropdown and click "Identity Token"
 3. Generate your token and copy it
-4. `export MOLTY_IDENTITY_TOKEN="your_token"`
+4. `export MOLTY_IDENTITY_TOKEN="your_token"` (optional for tip/hire/gig create — required for earner commands)
 
 ## Payment Protocols
 
@@ -94,7 +94,7 @@ molty.cash works with any x402 or MPP compatible wallet. Each CLI below supports
 | `STELLAR_SECRET_KEY` | One of the six | Stellar wallet secret key (`S...`) |
 | `MONAD_PRIVATE_KEY` | One of the six | Monad wallet private key (`0x...`) |
 | `WORLDCHAIN_PRIVATE_KEY` | One of the six | World Chain wallet private key (`0x...`) |
-| `MOLTY_IDENTITY_TOKEN` | For gigs & hire | Identity token (see above) |
+| `MOLTY_IDENTITY_TOKEN` | Optional | Identity token — adds verified sender badge. Required for earner commands (list, pick, submit). |
 
 If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar|monad|worldchain>`.
 
