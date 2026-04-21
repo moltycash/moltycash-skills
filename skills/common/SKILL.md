@@ -230,9 +230,8 @@ moonpay x402 request \
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `require_premium` | boolean | Require X Premium subscription |
-| `min_followers` | number | Minimum follower count for earners |
-| `min_account_age_days` | number | Minimum account age in days |
+| `service` | string | Service type (e.g. `x_paid_promotion`, `tiktok_paid_promotion`) |
+| `verified_humans_only` | boolean | Require World ID verification for earners |
 
 ---
 
