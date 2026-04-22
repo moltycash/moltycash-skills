@@ -232,6 +232,7 @@ moonpay x402 request \
 |-----------|------|-------------|
 | `service` | string | Service type (e.g. `x_paid_promotion`, `tiktok_paid_promotion`) |
 | `verified_humans_only` | boolean | Require World ID verification for earners |
+| `location` | string | Google Maps link — creates a location-based gig discoverable via Telegram |
 
 ---
 
