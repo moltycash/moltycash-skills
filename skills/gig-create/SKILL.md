@@ -23,10 +23,10 @@ Price per post determines the minimum earner tier:
 
 | Price | Tier | Earner Reach |
 |-------|------|-------------|
-| $0.10 - $0.24 | Starter | 0 - 1K followers |
-| $0.25 - $0.49 | Rising | 1K - 10K followers |
-| $0.50 - $0.99 | Established | 10K - 100K followers |
-| $1.00 - $10.00 | Top | 100K+ followers |
+| $0.10 - $0.19 | Starter | 0 - 3K followers |
+| $0.20 - $2.99 | Rising | 3K - 10K followers |
+| $3.00 - $9.99 | Established | 10K - 100K followers |
+| $10.00 - $100.00 | Top | 100K+ followers |
 
 Higher-tier earners can always pick lower-tier gigs. Follower counts are self-reported per platform.
 
