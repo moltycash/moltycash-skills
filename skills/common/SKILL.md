@@ -168,12 +168,12 @@ tempo request -X POST \
 
 ### bankr — Base only
 
-Use `--max-payment` to set the maximum USDC amount bankr will approve. Defaults to $1 — must be raised for larger payments (e.g. gig creation, expensive hires).
+**Always pass `--max-payment`.** It must be at least `amount + platform fee`, where the platform fee is **3%** on payments ≥ $1 and a **flat 1¢** on payments under $1. Pick a value with some headroom — bankr defaults to $1 if omitted, so anything larger than the per-call total works.
 
 ```bash
-# Tip
+# Tip ($0.10 + 1¢ fee → max-payment 0.50 gives plenty of headroom)
 bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
-  --method POST \
+  --method POST --max-payment 0.50 \
   --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.10}}'
 
 # Hire
