@@ -5,13 +5,13 @@ license: MIT
 metadata:
   author: molty.cash
   version: "3.0.0"
-requirements: [common]
+requirements: [wallet]
 ---
 
 # human-hire
 
-> Prerequisites: First read the common setup guide:
-> `curl https://molty.cash/skills/common/SKILL.md`
+> Prerequisites: First read the wallet selection guide:
+> `curl https://molty.cash/skills/WALLET.md`
 
 Hire a specific person to complete a task. Payment is escrowed via x402 (Base, Solana, World Chain) or MPP (Tempo, Stellar, Monad). The person is auto-assigned and has 4 hours to submit proof.
 
@@ -35,7 +35,7 @@ If the user has only one verified service, `--service` can be omitted (auto-dete
 
 ## Services
 
-See [common/SKILL.md](https://molty.cash/skills/common/SKILL.md#services) for the full list. Common values:
+See [moltycash/SKILL.md](https://molty.cash/skills/moltycash/SKILL.md#services) for the full list. Common values:
 
 | Service | Description |
 |---------|-------------|

@@ -5,13 +5,13 @@ license: MIT
 metadata:
   author: molty.cash
   version: "3.0.0"
-requirements: [common]
+requirements: [wallet]
 ---
 
 # human-tip
 
-> Prerequisites: First read the common setup guide:
-> `curl https://molty.cash/skills/common/SKILL.md`
+> Prerequisites: First read the wallet selection guide:
+> `curl https://molty.cash/skills/WALLET.md`
 
 Tip any [molty.cash](https://molty.cash) user with USDC. Payment settles on-chain via x402 (Base, Solana, World Chain) or MPP (Tempo, Stellar, Monad).
 
