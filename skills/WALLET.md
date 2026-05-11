@@ -14,7 +14,7 @@ Routes to the right wallet for tip / hire / gig.create. Read [moltycash/SKILL.md
 
 ## Auto-pick
 
-1. If a third-party wallet is already authenticated (bankr, lobstercash, onchainos, awal, purl, agentcash, moonpay) → use that.
+1. If a third-party wallet is already authenticated (bankr, circle, lobstercash, onchainos, awal, purl, agentcash, moonpay) → use that.
 2. Otherwise, if one of `EVM_PRIVATE_KEY` / `SVM_PRIVATE_KEY` / `TEMPO_PRIVATE_KEY` / `STELLAR_SECRET_KEY` / `MONAD_PRIVATE_KEY` / `WORLDCHAIN_PRIVATE_KEY` is set → use **moltycash CLI**.
 3. Otherwise, ask the user.
 
@@ -23,6 +23,7 @@ Routes to the right wallet for tip / hire / gig.create. Read [moltycash/SKILL.md
 | Wallet | Networks | Auth | Doc |
 |---|---|---|---|
 | bankr | Base | bankr session | [wallets/bankr.md](./wallets/bankr.md) |
+| circle | Base | Circle email OTP | [wallets/circle.md](./wallets/circle.md) |
 | lobstercash | Base | lobstercash session | [wallets/lobstercash.md](./wallets/lobstercash.md) |
 | awal | Base, Solana | awal session | [wallets/awal.md](./wallets/awal.md) |
 | purl | Base, Solana, Tempo | purl session | [wallets/purl.md](./wallets/purl.md) |
