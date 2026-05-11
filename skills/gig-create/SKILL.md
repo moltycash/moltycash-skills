@@ -79,8 +79,8 @@ npx moltycash gig create "Post about molty.cash" --price 0.50 --service x_paid_p
 # Rising tier + verified humans only
 npx moltycash gig create "Share our product" --price 0.25 --verified-humans-only
 
-# Location gig (discoverable via Telegram location sharing)
-npx moltycash gig create "Eat here, post receipt photo on X" --price 1 --location "https://maps.app.goo.gl/..."
+# Location gig (SMB rewards-program flow — earner submits last 5 chars of receipt)
+npx moltycash gig create "Visit Brew & Co — share your experience on X. Include the last 5 characters of your order number when submitting." --price 1 --location "https://maps.app.goo.gl/..."
 
 # Approve / reject a submission
 npx moltycash gig review ppp_123 asgn_abc approve
@@ -114,7 +114,7 @@ Identity token is optional — adds verified sender badge.
 | Hold period | 6h after approval; payment then released |
 | Earner eligibility | Must meet tier (follower count). With service: must have service verified. |
 | Verified humans | Optional via `--verified-humans-only` (World ID required) |
-| Location gigs | Optional via `--location` (Google Maps link). Hidden from listings, discoverable via Telegram location sharing only. |
+| Location gigs | Optional via `--location` (Google Maps link). Hidden from listings, discoverable via Telegram location sharing only. **Earners must submit the last 5 characters of their purchase receipt** alongside the post URL — owner cross-references against POS records before approving. Tell the customer in the gig description how to find the 5 chars (e.g. "last 5 characters of your order number"). |
 | Expired gigs | Uncompleted amount auto-refunded |
 
 ## Links
