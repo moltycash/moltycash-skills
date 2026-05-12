@@ -1,6 +1,6 @@
 ---
 name: moltycash-wallet
-description: Picks a wallet CLI for paying moltycash endpoints. Auto-pick prioritises authenticated third-party wallets, falls back to moltycash CLI when the user supplies a private key.
+description: Picks a wallet CLI for paying moltycash endpoints. Auto-pick rules + a matrix of 11 fetchable per-wallet docs at https://molty.cash/skills/wallets/<wallet>.md (bankr, circle, lobstercash, awal, purl, agentcash, onchainos, tempo, moonpay, pay-sh, moltycash). Falls back to the moltycash CLI when no third-party wallet is authenticated.
 license: MIT
 metadata:
   author: molty.cash
