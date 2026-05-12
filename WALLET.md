@@ -10,7 +10,7 @@ requirements: [moltycash]
 
 # WALLET — Pick a wallet for paying moltycash
 
-Routes to the right wallet for tip / hire / gig.create. Read [moltycash/SKILL.md](https://molty.cash/skills/moltycash/SKILL.md) first for the protocol primer + identity token setup.
+Routes to the right wallet for tip / hire / gig.create. For full gig-creation usage see [gig-post](https://molty.cash/gig-post/SKILL.md); for earning see [gig-earn](https://molty.cash/gig-earn/SKILL.md).
 
 ## Auto-pick
 
