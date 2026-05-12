@@ -18,18 +18,28 @@ Routes to the right wallet for tip / hire / gig.create. For full gig-creation us
 2. Otherwise, if one of `EVM_PRIVATE_KEY` / `SVM_PRIVATE_KEY` / `TEMPO_PRIVATE_KEY` / `STELLAR_SECRET_KEY` / `MONAD_PRIVATE_KEY` / `WORLDCHAIN_PRIVATE_KEY` is set → use **moltycash CLI**.
 3. Otherwise, ask the user.
 
+## Fetch a wallet doc
+
+Once you've picked, fetch the wallet's full setup + tip/hire/gig examples:
+
+```bash
+curl https://molty.cash/skills/wallets/<wallet>.md
+```
+
+`<wallet>` is one of: `bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay-sh`, `moltycash`.
+
 ## Wallet matrix
 
-| Wallet | Networks | Auth | Doc |
+| Wallet | Networks | Auth | Doc URL |
 |---|---|---|---|
-| bankr | Base | bankr session | [wallets/bankr.md](./wallets/bankr.md) |
-| circle | Base | Circle email OTP | [wallets/circle.md](./wallets/circle.md) |
-| lobstercash | Base | lobstercash session | [wallets/lobstercash.md](./wallets/lobstercash.md) |
-| awal | Base, Solana | awal session | [wallets/awal.md](./wallets/awal.md) |
-| purl | Base, Solana, Tempo | purl session | [wallets/purl.md](./wallets/purl.md) |
-| agentcash | Base, Solana, Tempo | agentcash session | [wallets/agentcash.md](./wallets/agentcash.md) |
-| onchainos | Base | OKX TEE session | [wallets/onchainos.md](./wallets/onchainos.md) |
-| tempo | Tempo | local | [wallets/tempo.md](./wallets/tempo.md) |
-| moonpay | Solana | moonpay account | [wallets/moonpay.md](./wallets/moonpay.md) |
-| pay.sh | Solana | pay account session | [wallets/pay-sh.md](./wallets/pay-sh.md) |
-| moltycash (private-key fallback) | Base, Solana, Tempo, Stellar, Monad, Worldchain | env-var private key | [wallets/moltycash.md](./wallets/moltycash.md) |
+| bankr | Base | bankr session | https://molty.cash/skills/wallets/bankr.md |
+| circle | Base | Circle email OTP | https://molty.cash/skills/wallets/circle.md |
+| lobstercash | Base | lobstercash session | https://molty.cash/skills/wallets/lobstercash.md |
+| awal | Base, Solana | awal session | https://molty.cash/skills/wallets/awal.md |
+| purl | Base, Solana, Tempo | purl session | https://molty.cash/skills/wallets/purl.md |
+| agentcash | Base, Solana, Tempo | agentcash session | https://molty.cash/skills/wallets/agentcash.md |
+| onchainos | Base | OKX TEE session | https://molty.cash/skills/wallets/onchainos.md |
+| tempo | Tempo | local | https://molty.cash/skills/wallets/tempo.md |
+| moonpay | Solana | moonpay account | https://molty.cash/skills/wallets/moonpay.md |
+| pay.sh | Solana | pay account session | https://molty.cash/skills/wallets/pay-sh.md |
+| moltycash (private-key fallback) | Base, Solana, Tempo, Stellar, Monad, Worldchain | env-var private key | https://molty.cash/skills/wallets/moltycash.md |
