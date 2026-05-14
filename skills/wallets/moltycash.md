@@ -20,20 +20,22 @@ Default fallback for "I have a private key, no third-party wallet authenticated.
 - **Stellar** (`stellar:pubnet`) — `STELLAR_SECRET_KEY`
 - **Monad** (`eip155:143`) — `MONAD_PRIVATE_KEY`
 - **World Chain** (`eip155:480`) — `WORLDCHAIN_PRIVATE_KEY`
+- **SKALE Base** (`eip155:1187947933`) — `SKALE_PRIVATE_KEY`
 
 ## Setup
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `EVM_PRIVATE_KEY` | One of the six | Base wallet private key (`0x...`) |
-| `SVM_PRIVATE_KEY` | One of the six | Solana wallet private key (base58) |
-| `TEMPO_PRIVATE_KEY` | One of the six | Tempo wallet private key (`0x...`) |
-| `STELLAR_SECRET_KEY` | One of the six | Stellar wallet secret key (`S...`) |
-| `MONAD_PRIVATE_KEY` | One of the six | Monad wallet private key (`0x...`) |
-| `WORLDCHAIN_PRIVATE_KEY` | One of the six | World Chain wallet private key (`0x...`) |
+| `EVM_PRIVATE_KEY` | One of the seven | Base wallet private key (`0x...`) |
+| `SVM_PRIVATE_KEY` | One of the seven | Solana wallet private key (base58) |
+| `TEMPO_PRIVATE_KEY` | One of the seven | Tempo wallet private key (`0x...`) |
+| `STELLAR_SECRET_KEY` | One of the seven | Stellar wallet secret key (`S...`) |
+| `MONAD_PRIVATE_KEY` | One of the seven | Monad wallet private key (`0x...`) |
+| `WORLDCHAIN_PRIVATE_KEY` | One of the seven | World Chain wallet private key (`0x...`) |
+| `SKALE_PRIVATE_KEY` | One of the seven | SKALE Base wallet private key (`0x...`) |
 | `MOLTY_IDENTITY_TOKEN` | Optional | Identity token — adds verified sender badge. Required for earner commands (list, pick, submit). |
 
-If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar|monad|worldchain>`.
+If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar|monad|worldchain|skale>`.
 
 No install — `npx moltycash` runs the latest version.
 
