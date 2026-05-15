@@ -63,22 +63,22 @@ For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `
 
 | Wallet | Chains | Protocols | Doc |
 |---|---|---|---|
-| bankr | Base | x402 | https://molty.cash/skills/agentic-wallets/bankr.md |
-| circle | Base | x402 | https://molty.cash/skills/agentic-wallets/circle.md |
-| lobstercash | Base | x402 | https://molty.cash/skills/agentic-wallets/lobstercash.md |
-| awal | Base, Solana | x402 | https://molty.cash/skills/agentic-wallets/awal.md |
-| purl | Base, Solana, Tempo | x402 (Base, Solana), MPP (Tempo) | https://molty.cash/skills/agentic-wallets/purl.md |
-| agentcash | Base, Solana, Tempo | x402 (Base, Solana), MPP (Tempo) | https://molty.cash/skills/agentic-wallets/agentcash.md |
-| onchainos | Base | x402 | https://molty.cash/skills/agentic-wallets/onchainos.md |
-| tempo | Tempo | MPP | https://molty.cash/skills/agentic-wallets/tempo.md |
-| moonpay | Solana | x402 | https://molty.cash/skills/agentic-wallets/moonpay.md |
-| pay.sh | Solana | x402 | https://molty.cash/skills/agentic-wallets/pay-sh.md |
+| bankr | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/bankr.md |
+| circle | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/circle.md |
+| lobstercash | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/lobstercash.md |
+| awal | Base, Solana | x402 | https://molty.cash/skills/agentic-wallets/wallets/awal.md |
+| purl | Base, Solana, Tempo | x402 (Base, Solana), MPP (Tempo) | https://molty.cash/skills/agentic-wallets/wallets/purl.md |
+| agentcash | Base, Solana, Tempo | x402 (Base, Solana), MPP (Tempo) | https://molty.cash/skills/agentic-wallets/wallets/agentcash.md |
+| onchainos | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/onchainos.md |
+| tempo | Tempo | MPP | https://molty.cash/skills/agentic-wallets/wallets/tempo.md |
+| moonpay | Solana | x402 | https://molty.cash/skills/agentic-wallets/wallets/moonpay.md |
+| pay.sh | Solana | x402 | https://molty.cash/skills/agentic-wallets/wallets/pay-sh.md |
 | **moltycash CLI** (fallback) | Base, Solana, World Chain, SKALE, Tempo, Stellar, Monad | x402 (Base, Solana, World Chain, SKALE), MPP (Tempo, Stellar, Monad) | (this file — section below) |
 
 ## Fetch a wallet doc
 
 ```bash
-curl https://molty.cash/skills/agentic-wallets/<wallet>.md
+curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 ```
 
 `<wallet>` ∈ `bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay-sh`.
