@@ -1,33 +1,37 @@
 ---
-name: moltycash-wallet-onchainos
-description: Pay moltycash via OKX agentic wallet (onchainos CLI). Base only. Multi-step probe → sign → assemble → replay because x402-pay is signer-only.
+name: wallet-onchainos
+description: onchainos (OKX agentic wallet, TEE-signed) — x402 paid HTTP transport on Base. Signer-only; needs a probe → sign → replay helper.
 license: MIT
 metadata:
   author: molty.cash
   version: "1.0.0"
-requirements: [moltycash]
 ---
 
 # onchainos
 
 OKX agentic wallet, TEE-signed (keys stay in OKX's secure enclave).
 
-## Supported chains
+## Protocols & chains
 
-- **Base** (`eip155:8453`)
+- **x402** — Base (`eip155:8453`)
 
-## Setup
+## Install
 
-Install + auth with onchainos per its own docs.
+`npm install -g onchainos` — see https://github.com/okx/onchainos-skills.
 
-## Why this needs a script
+## Detection
+
+- **Auth check**: `onchainos --help` (install verification). The CLI is signer-only — no native session/auth command.
+- **USDC balance** (Base): not exposed through the CLI. Query the TEE-custodied address against the Base USDC contract (`0x833589fcd6edb6e08f4c7c32d4f71b54bda02913`) via a Base RPC or block explorer.
+
+## Why this needs a helper script
 
 `onchainos payment x402-pay` is signer-only — it takes a parsed `accepts` JSON array and returns `{signature, authorization}`. The HTTP round-trip (probe → decode → assemble → replay) is on the caller. Tracking issue upstream: [okx/onchainos-skills#32](https://github.com/okx/onchainos-skills/issues/32).
 
-Helper:
+## Transport
 
 ```bash
-moltycash_okx() {
+okx_x402_post() {
   local url="$1" body="$2"
   curl -sS -X POST "$url" -H 'content-type: application/json' -d "$body" -D /tmp/h -o /dev/null
   local pr=$(grep -i '^payment-required:' /tmp/h | sed 's/^[^:]*: //I' | tr -d '\r')
@@ -43,18 +47,11 @@ moltycash_okx() {
 }
 ```
 
-## Tip / Hire / Gig
+## Example — pay moltycash (gig.create)
 
 ```bash
-# Tip
-moltycash_okx https://api.molty.cash/0xmesuthere/a2a \
-  '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.10}}'
-
-# Hire
-moltycash_okx https://api.molty.cash/0xmesuthere/a2a \
-  '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}'
-
-# Gig Create
-moltycash_okx https://api.molty.cash/a2a \
+okx_x402_post https://api.molty.cash/a2a \
   '{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2}}'
 ```
+
+For moltycash `tip` / `hire` payloads, see [moltycash PAYMENT.md](https://molty.cash/skills/PAYMENT.md).

@@ -10,8 +10,8 @@ requirements: [wallet]
 
 # gig-create
 
-> Prerequisites: First read the wallet selection guide:
-> `curl https://molty.cash/skills/WALLET.md`
+> Prerequisites: First read the payment / wallet selection guide:
+> `curl https://molty.cash/skills/PAYMENT.md`
 
 Create gigs that pay USDC per completed task. Price automatically determines which earner tier can see the gig. Service is optional — open-format gigs are allowed.
 

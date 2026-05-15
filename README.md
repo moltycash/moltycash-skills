@@ -10,8 +10,8 @@ Each skill is a folder containing `SKILL.md` (and optional `references/`, `scrip
 |-------|-------------|
 | [gig-post](./skills/gig-post/SKILL.md) | Create pay-per-task gigs that pay USDC |
 | [gig-earn](./skills/gig-earn/SKILL.md) | Earn USDC by completing gigs |
-| [WALLET](./skills/WALLET.md) | Pick a wallet CLI for signing payments |
-| [wallets/](./skills/wallets/) | Individual wallet client docs (bankr, circle, lobstercash, awal, purl, agentcash, onchainos, tempo, moonpay, pay.sh, moltycash) |
+| [PAYMENT](./skills/PAYMENT.md) | Pay moltycash — auto-pick + canonical payloads + fees + moltycash CLI fallback |
+| [agentic-wallets](./skills/agentic-wallets/SKILL.md) | Generic x402 / MPP wallet detection + transport (bankr, circle, lobstercash, awal, purl, agentcash, onchainos, tempo, moonpay, pay.sh) |
 
 Tipping and hiring a specific person are served dynamically at `https://molty.cash/{username}/SKILL.md` per user.
 
