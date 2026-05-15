@@ -20,7 +20,7 @@ Routes the right wallet for `tip` / `hire` / `gig.create`. For full gig-creation
 
 ## Detect available wallets
 
-For third-party wallets, run the generic probe in [agentic-wallets/SKILL.md](./agentic-wallets/SKILL.md) (`detect_wallets`) — it reports installed + authed + balance for each CLI.
+For third-party wallets, run the generic probe in the [agentic-wallets SKILL](https://molty.cash/skills/agentic-wallets/SKILL.md) (`detect_wallets`) — it reports installed + authed + balance for each CLI.
 
 For the moltycash CLI fallback, check env-var presence:
 
@@ -32,7 +32,7 @@ done
 
 ## moltycash settlement chains
 
-A wallet from the generic [wallets/](./agentic-wallets/) catalog can pay moltycash only if its `Protocols & chains` list intersects one of these:
+A wallet from the generic [agentic-wallets catalog](https://molty.cash/skills/agentic-wallets/SKILL.md) can pay moltycash only if its `Protocols & chains` list intersects one of these:
 
 - **x402**: Base (`eip155:8453`), Solana (`solana:5eykt4...`), World Chain (`eip155:480`), SKALE Base (`eip155:1187947933`)
 - **MPP**: Tempo (`eip155:4217`), Stellar (`stellar:pubnet`), Monad (`eip155:143`)
