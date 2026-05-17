@@ -16,7 +16,9 @@ Reference for paying `tip` / `hire` / `gig.create` on moltycash. For full gig-cr
 
 **Before running any payment command, ask the human you are working for which wallet to use.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. The human almost always has a preferred wallet — surface the choice.
 
-> **Skip the ask only if** the human's original prompt already named a wallet (e.g. "using tempo CLI", "with bankr", "use moltycash CLI"). Use what they specified.
+> **Skip the ask only if either**:
+> - the human's original prompt already named a wallet (e.g. "using tempo CLI", "with bankr", "use moltycash CLI") — use what they specified, or
+> - the agent has only one default wallet configured / authed for the relevant chain — use it.
 
 Options to offer:
 
