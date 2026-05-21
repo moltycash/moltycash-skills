@@ -41,7 +41,7 @@ curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 A wallet from the generic [agentic-wallets catalog](https://molty.cash/skills/agentic-wallets/SKILL.md) can pay moltycash only if its `Protocols & chains` list intersects one of these:
 
 - **x402**: Base (`eip155:8453`), Solana (`solana:5eykt4...`), World Chain (`eip155:480`), SKALE Base (`eip155:1187947933`)
-- **MPP**: Tempo (`eip155:4217`), Stellar (`stellar:pubnet`), Monad (`eip155:143`)
+- **MPP**: Tempo (`eip155:4217`), Stellar (`stellar:pubnet`), Monad (`eip155:143`), Stripe (card / link, fiat USD — **web only**)
 
 When the moltycash endpoint returns a 402 with `accepts[]`, the agent should select a wallet whose `Protocols & chains` and USDC balance both intersect `accepts[].network`.
 
@@ -80,6 +80,7 @@ For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `
 | moonpay | Solana | x402 | https://molty.cash/skills/agentic-wallets/wallets/moonpay.md |
 | pay.sh | Solana | x402 | https://molty.cash/skills/agentic-wallets/wallets/pay-sh.md |
 | **moltycash CLI** (fallback) | Base, Solana, World Chain, SKALE, Tempo, Stellar, Monad | x402 (Base, Solana, World Chain, SKALE), MPP (Tempo, Stellar, Monad) | (this file — section below) |
+| stripe | Stripe (fiat USD via card / link) | MPP (human-in-the-loop) | https://molty.cash/skills/agentic-wallets/wallets/stripe.md |
 
 ## Fetch a wallet doc
 
@@ -87,7 +88,7 @@ For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `
 curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 ```
 
-`<wallet>` ∈ `bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay-sh`.
+`<wallet>` ∈ `bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay-sh`, `stripe`.
 
 ## Putting it together
 
