@@ -24,7 +24,7 @@ Options to offer:
 
 | Choice | When |
 |---|---|
-| A specific catalog wallet (`bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay.sh`) | The human picks one |
+| A specific catalog wallet (`bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay.sh`, `link-cli`) | The human picks one |
 | "Scan my system" | The human asks you to detect what's installed — fetch [agentic-wallets/SKILL.md](https://molty.cash/skills/agentic-wallets/SKILL.md) and run its `detect_wallets` probe |
 | **moltycash CLI fallback** | The human has no third-party wallet CLI installed; signs with `*_PRIVATE_KEY` env vars (see the bottom of this file) |
 
