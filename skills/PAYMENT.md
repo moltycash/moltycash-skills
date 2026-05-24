@@ -65,6 +65,52 @@ When the moltycash endpoint returns a 402 with `accepts[]`, the agent should sel
 
 For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `amount + fee` plus headroom.
 
+## $moltycash rewards
+
+Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash on Base**, deposited into the payer's molty smart wallet. The reward rate depends on how much $moltycash the payer already holds:
+
+| Held in molty wallet | Reward rate |
+|---|---|
+| 0 $moltycash | 0% |
+| 100,000+ | 25% |
+| 500,000+ | 50% |
+| 1,000,000+ | 100% |
+
+Hold zero, earn zero — you must hold $moltycash to earn rewards. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero.
+
+**Starter grant:** the very first time an X-authed user with a molty wallet earns a commission, they receive a one-time **100,000 $moltycash** bootstrap grant deposited into their molty smart wallet. This lifts them straight to the 25% tier so subsequent payments accumulate organically. Wallet-only payers (no X identity) skip the grant — sign up at molty.cash to enable. Configurable via `configs/rewards.starter_grant_tokens`.
+
+Tier is token-count denominated, so price changes never drop your tier — only your own buy/claim actions do. Tiers are configurable in `configs/rewards.tiers` (array of `{ min_tokens, rate }`); future tiers can be added without a redeploy.
+
+Rewards accumulate in the molty wallet until balance ≥ 1,000,000 $moltycash (`claim_threshold_moltycash`) OR ≥ $10,000 USD value (`claim_threshold_usd`), then claimable via the rewards page or `reward.claim`.
+
+Rules:
+- **Paid on actual payout** — refunded hires and unclaimed gig slots never mint rewards.
+- **Wallet-only payers without a molty wallet** (Solana/Tempo/Stripe agents not signed up via X) earn no rewards yet. Sign up at molty.cash to enable.
+- **Pre-TGE**: entries are recorded as pending USD credits; on-chain delivery happens once the rewards wallet ships.
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}
+{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article"}}
+{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"...","price":0.5,"quantity":2}}
+```
+
+No special params — rewards are automatic for X-authed payers.
+
+### Checking + claiming staked rewards
+
+Two A2A methods (both require a valid identity token):
+
+```json
+// Check balance
+{"jsonrpc":"2.0","id":1,"method":"reward.balance"}
+
+// Claim full balance — defaults destination to your set payout address
+{"jsonrpc":"2.0","id":1,"method":"reward.claim","params":{"destination":"0x..."}}
+```
+
+`reward.claim` errors with `rewards_locked` until the balance ≥ threshold (1M tokens OR $10k USD), `rewards_paused` when the program is temporarily disabled, `no_molty_wallet` if the user has no molty wallet, `no_destination` if neither a destination param nor a default payout address is set. Web UI at <https://molty.cash/rewards>.
+
 ## Wallet matrix
 
 | Wallet | Chains | Protocols | Doc |
