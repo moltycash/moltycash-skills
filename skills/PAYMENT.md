@@ -69,14 +69,13 @@ For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `
 
 Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash on Base**, deposited into the payer's molty smart wallet. The reward rate depends on how much $moltycash the payer already holds:
 
-| Held in molty wallet | Reward rate |
-|---|---|
-| 0 $moltycash | 0% |
-| 100,000+ | 25% |
-| 500,000+ | 50% |
-| 1,000,000+ | 100% |
+| Held in molty wallet | Base rate | × 2× discovery booster (paying someone new) |
+|---|---|---|
+| 100,000+ (starter grant lands you here) | 25% | **50%** |
+| 500,000+ | 50% | **100%** |
+| 1,000,000+ | 100% | **200%** |
 
-Hold zero, earn zero — you must hold $moltycash to earn rewards. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero.
+The floor is 25%, not 0% — the starter grant (see below) puts every X-authed first-time payer at the 100K tier. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero. Pay someone new while at 1M and the platform pays you *back* 200% of the fee.
 
 **🚀 Discovery booster (always-on):** when you pay an account that's never been paid through molty.cash before, your tier rate is multiplied by **2×** for that single transaction's reward. Hold $moltycash, bring in new payees, climb tiers twice as fast. Recipient must have a verified X identity (no wallet-only sybils); each payer is capped at 50 boosted slots lifetime. The platform may temporarily bump the multiplier higher (5× / 10×) during launch campaigns — live status on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.discovery_booster_*`.
 
