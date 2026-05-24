@@ -71,9 +71,9 @@ Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash o
 
 | Held in molty wallet | Base rate | × 2× discovery booster (paying someone new) |
 |---|---|---|
-| 100,000+ (starter grant lands you here) | 25% | **50%** |
-| 500,000+ | 50% | **100%** |
-| 1,000,000+ | 100% | **200%** |
+| 100K – 500K (starter grant lands you here) | 25% | **50%** |
+| 500K – 1M | 50% | **100%** |
+| 1M+ | 100% | **200%** |
 
 The floor is 25%, not 0% — the starter grant (see below) puts every X-authed first-time payer at the 100K tier. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero. Pay someone new while at 1M and the platform pays you *back* 200% of the fee.
 
