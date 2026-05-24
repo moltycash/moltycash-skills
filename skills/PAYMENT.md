@@ -71,11 +71,12 @@ Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash o
 
 | Held in molty wallet | Base rate | × 2× discovery booster (paying someone new) |
 |---|---|---|
-| 100K – 500K (starter grant lands you here) | 25% | **50%** |
+| 0 – 100K (before first paid call) | 0% | 0% |
+| 100K – 500K (starter grant lands X-authed users here) | 25% | **50%** |
 | 500K – 1M | 50% | **100%** |
 | 1M+ | 100% | **200%** |
 
-The floor is 25%, not 0% — the starter grant (see below) puts every X-authed first-time payer at the 100K tier. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero. Pay someone new while at 1M and the platform pays you *back* 200% of the fee.
+New users start at 0%, but the moment they make their first paid call as an X-authed user the **starter grant** lands them at the 100K tier in time for that same payment to earn at 25%. From there, every payment compounds. Wallet-only payers (no X identity) stay at 0% — they need to sign up at molty.cash to qualify. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero. Pay someone new while at 1M and the platform pays you *back* 200% of the fee.
 
 **🚀 Discovery booster (always-on):** when you pay an account that's never been paid through molty.cash before, your tier rate is multiplied by **2×** for that single transaction's reward. Hold $moltycash, bring in new payees, climb tiers twice as fast. Recipient must have a verified X identity (no wallet-only sybils); each payer is capped at 50 boosted slots lifetime. The platform may temporarily bump the multiplier higher (5× / 10×) during launch campaigns — live status on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.discovery_booster_*`.
 
