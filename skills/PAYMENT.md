@@ -71,16 +71,13 @@ Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash o
 
 | Held in molty wallet | Base rate | × 2× discovery booster (paying someone new) |
 |---|---|---|
-| 0 – 100K (baseline) | 12.5% | **25%** |
-| 100K – 500K (starter grant lands X-authed users here) | 25% | **50%** |
+| 0 – 500K (floor) | 25% | **50%** |
 | 500K – 1M | 50% | **100%** |
 | 1M+ | 100% | **200%** |
 
-Baseline is 12.5% — everyone earns from day one. The first paid call by an X-authed user also triggers the **starter grant** (100K $moltycash), which jumps them straight to the 25% tier in time for that same payment to earn at 25%. From there, every payment compounds. Wallet-only payers without a molty wallet have no place for the rewards to land — sign up at molty.cash to enable. Hold 1M and the platform is effectively free (3% fee paid, 3% returned). Pay someone new while at 1M and the platform pays you *back* 200% of the fee.
+Everyone earns from day one — the floor is 25%. Climb tiers by holding more $moltycash. Hold 1M and the platform is effectively free (3% fee paid, 3% returned). Pay a brand-new recipient at 1M and the platform pays you *back* 200% of the fee. Wallet-only payers without a molty wallet have no place for the rewards to land — sign up at molty.cash to enable.
 
 **🚀 Discovery booster (always-on):** when you pay an account that's never been paid through molty.cash before, your tier rate is multiplied by **2×** for that single transaction's reward. Hold $moltycash, bring in new payees, climb tiers twice as fast. Recipient must have a verified X identity (no wallet-only sybils); each payer is capped at 50 boosted slots lifetime. The platform may temporarily bump the multiplier higher (5× / 10×) during launch campaigns — live status on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.discovery_booster_*`.
-
-**Starter grant:** the very first time an X-authed user with a molty wallet earns a commission, they receive a one-time **100,000 $moltycash** bootstrap grant deposited into their molty smart wallet. This lifts them straight to the 25% tier so subsequent payments accumulate organically. Wallet-only payers (no X identity) skip the grant — sign up at molty.cash to enable. Configurable via `configs/rewards.starter_grant_tokens`.
 
 Tier is token-count denominated, so price changes never drop your tier — only your own buy/claim actions do. Tiers are configurable in `configs/rewards.tiers` (array of `{ min_tokens, rate }`); future tiers can be added without a redeploy.
 

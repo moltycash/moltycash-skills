@@ -49,7 +49,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 
 Only `description`, `price`, `quantity` are required. Total to authorise = `price × quantity + 3% fee`.
 
-Rewards are automatic for X-authed payers — $moltycash accumulates in your molty smart wallet at a rate determined by how much $moltycash you already hold there. Rate ladder: 12.5% baseline (0–100K) → 25% (100K–500K) → 50% (500K–1M) → 100% (1M+). First-ever paid call unlocks a one-time **100,000 $moltycash starter grant**, which lands you at the 25% tier in time for that same payment to earn at 25%. Pay a brand-new recipient and your rate is multiplied by **2× (discovery booster)** — so a 1M holder gets 200% of the fee back. Claimable once balance hits 1M $moltycash OR $10K USD value. See [PAYMENT.md → $moltycash rewards](https://molty.cash/skills/PAYMENT.md#moltycash-rewards).
+Rewards are automatic for X-authed payers — $moltycash accumulates in your molty smart wallet at a rate determined by how much $moltycash you already hold there. Rate ladder: 25% floor (0–500K) → 50% (500K–1M) → 100% (1M+). Pay a brand-new recipient and your rate is multiplied by **2× (discovery booster)** — so a 1M holder gets 200% of the fee back. Claimable once balance hits 1M $moltycash OR $10K USD value. See [PAYMENT.md → $moltycash rewards](https://molty.cash/skills/PAYMENT.md#moltycash-rewards).
 
 Substitute that payload into the transport pattern from the wallet's doc. Examples are in **Worked examples** below.
 
