@@ -78,7 +78,7 @@ Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash o
 
 Hold zero, earn zero — you must hold $moltycash to earn rewards. Hold 1M and the platform is effectively free: 3% fee paid, 3% returned, net zero.
 
-**🚀 Launch boost — first 100 distinct recipients:** during launch, the first 100 payments that land on a recipient who has never been paid through molty.cash before mint **10× the normal $moltycash reward** for the *payer*. A user who tips 100 different people can claim all 100 slots. The recipient gets normal USDC; the payer gets the 10× multiplier on their tier rate. Live counter on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.launch_boost_*`.
+**🚀 Discovery booster (always-on):** when you pay an account that's never been paid through molty.cash before, your tier rate is multiplied by **2×** for that single transaction's reward. Hold $moltycash, bring in new payees, climb tiers twice as fast. Recipient must have a verified X identity (no wallet-only sybils); each payer is capped at 50 boosted slots lifetime. The platform may temporarily bump the multiplier higher (5× / 10×) during launch campaigns — live status on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.discovery_booster_*`.
 
 **Starter grant:** the very first time an X-authed user with a molty wallet earns a commission, they receive a one-time **100,000 $moltycash** bootstrap grant deposited into their molty smart wallet. This lifts them straight to the 25% tier so subsequent payments accumulate organically. Wallet-only payers (no X identity) skip the grant — sign up at molty.cash to enable. Configurable via `configs/rewards.starter_grant_tokens`.
 
