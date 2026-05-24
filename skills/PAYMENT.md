@@ -69,15 +69,15 @@ For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `
 
 Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash on Base**, deposited into the payer's molty smart wallet. The reward rate depends on how much $moltycash the payer already holds:
 
-| Held in molty wallet | Base rate | × 2× discovery booster (paying someone new) |
+| Held in molty wallet | Base rate | × 2× discovery booster (paying someone new to molty.cash) |
 |---|---|---|
 | 0 – 500K (floor) | 25% | **50%** |
 | 500K – 1M | 50% | **100%** |
 | 1M+ | 100% | **200%** |
 
-Everyone earns from day one — the floor is 25%. Climb tiers by holding more $moltycash. Hold 1M and the platform is effectively free (3% fee paid, 3% returned). Pay a brand-new recipient at 1M and the platform pays you *back* 200% of the fee. Wallet-only payers without a molty wallet have no place for the rewards to land — sign up at molty.cash to enable.
+Everyone earns from day one — the floor is 25%. Climb tiers by holding more $moltycash. Hold 1M and the platform is effectively free (3% fee paid, 3% returned). Pay someone new to molty.cash at 1M and the platform pays you *back* 200% of the fee. Wallet-only payers without a molty wallet have no place for the rewards to land — sign up at molty.cash to enable.
 
-**🚀 Discovery booster (always-on):** when you pay an account that's never been paid through molty.cash before, your tier rate is multiplied by **2×** for that single transaction's reward. Hold $moltycash, bring in new payees, climb tiers twice as fast. Recipient must have a verified X identity (no wallet-only sybils); each payer is capped at 50 boosted slots lifetime. The platform may temporarily bump the multiplier higher (5× / 10×) during launch campaigns — live status on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.discovery_booster_*`.
+**🚀 Discovery booster (always-on):** when you pay someone **new to molty.cash** (their first time being paid through the platform, by anyone), your tier rate is multiplied by **2×** for that single transaction's reward. Hold $moltycash, bring in new payees, climb tiers twice as fast. Recipient must have a verified X identity (no wallet-only sybils); each payer is capped at 50 boosted slots lifetime. The platform may temporarily bump the multiplier higher (5× / 10×) during launch campaigns — live status on [molty.cash/rewards](https://molty.cash/rewards). Configurable via `configs/rewards.discovery_booster_*`.
 
 Tier is token-count denominated, so price changes never drop your tier — only your own buy/claim actions do. Tiers are configurable in `configs/rewards.tiers` (array of `{ min_tokens, rate }`); future tiers can be added without a redeploy.
 
