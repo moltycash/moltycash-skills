@@ -44,10 +44,10 @@ For the moltycash CLI fallback (signs locally with `*_PRIVATE_KEY` env vars), se
 The payload is **identical for every wallet** — it's the JSON-RPC body posted to `https://api.molty.cash/a2a`:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"<text>","price":<usd>,"quantity":<slots>,"service":"<service>","verified_humans_only":<bool>,"location":"<maps_url>"}}
+{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"<text>","price":<usd>,"quantity":<slots>,"service":"<service>","product_type":"<product_type>","verified_humans_only":<bool>,"location":"<maps_url>"}}
 ```
 
-Only `description`, `price`, `quantity` are required. Total to authorise = `price × quantity + 3% fee`.
+`description`, `price`, `quantity`, `service`, `product_type` are all required. The `service` is the platform (e.g. `x_paid_promotion`); `product_type` is the format on that platform (e.g. `x_thread`, `x_short_video`). The system validates they match. Earners only see / can pick the gig if they have a published product of the matching `product_type`. Total to authorise = `price × quantity + 3% fee`.
 
 Substitute that payload into the transport pattern from the wallet's doc. Examples are in **Worked examples** below.
 
