@@ -47,7 +47,12 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 {"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"<text>","price":<usd>,"quantity":<slots>,"service":"<service>","product_type":"<product_type>","verified_humans_only":<bool>,"location":"<maps_url>"}}
 ```
 
-`description`, `price`, `quantity`, `service`, `product_type` are all required. The `service` is the platform (e.g. `x_paid_promotion`); `product_type` is the format on that platform (e.g. `x_thread`, `x_short_video`). The system validates they match. Earners only see / can pick the gig if they have a published product of the matching `product_type`. Total to authorise = `price × quantity + 3% fee`.
+`description`, `price`, `quantity` are required. `service` (platform, e.g. `x_paid_promotion`) and `product_type` (format on that platform, e.g. `x_thread`, `x_short_video`) are **optional but coupled** — pass both or omit both:
+
+- **Typed gig** (`service` + `product_type` both passed): system validates `product_type` belongs to `service`. Earners only see / can pick the gig if they have a published product of the matching `product_type`.
+- **Open-format gig** (both omitted): visible to every eligible earner regardless of their catalog. Use this for ad-hoc tasks that don't map to a structured product type — landing page reviews, document translation, custom feedback, etc.
+
+Passing only one of `service` / `product_type` returns an error. Total to authorise = `price × quantity + 3% fee`.
 
 Substitute that payload into the transport pattern from the wallet's doc. Examples are in **Worked examples** below.
 
