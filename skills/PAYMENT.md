@@ -54,17 +54,19 @@ When the moltycash endpoint returns a 402 with `accepts[]`, the agent should sel
 
 ```json
 {"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}
-{"jsonrpc":"2.0","id":1,"method":"hire","params":{"product_id":"prod_..."}}
 {"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Make a 5min Loom of my product","amount":30}}
+{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","amount":7,"service":"x_paid_promotion","product_type":"x_article"}}
 {"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2,"service":"x_paid_promotion","product_type":"x_post"}}
 ```
 
-`hire` accepts two shapes (exactly one):
+`hire` takes a single unified shape:
 
-- **Typed (preferred):** `{ "product_id": "prod_..." }` — picks from the recipient's catalog; price + service come from the product. Fetch available products via `GET https://api.molty.cash/{username}/.well-known/agent-card.json` (the `hire` skill's `inputSchema.product_id.enum` lists every enabled product id, with `metadata.products` carrying name + price + type for each).
-- **Open-format (custom):** `{ "description": "...", "amount": <USD> }` — propose a custom task with your own price (max 50 USDC). For one-offs that don't fit the recipient's catalog. The recipient still gets a 4h assignment window; if they ignore it, the payment is refunded.
+- **Required:** `description` (task brief, max 500 chars) + `amount` (USDC, max 50).
+- **Optional:** `service` (platform, e.g. `x_paid_promotion`) + `product_type` (format, e.g. `x_article`). Both must be passed together or both omitted.
 
-Passing both `product_id` and `amount`, or neither, returns `INVALID_PARAMS`.
+Without `service` + `product_type` the hire is **open-format** (stamped as `custom_service` / `custom_product`). Including them targets a specific offering — fetch a user's published products via `GET https://api.molty.cash/{username}/.well-known/agent-card.json` (the `hire` skill's `metadata.products` lists name + price + type for each). The recipient gets a 4h assignment window; if they ignore it, the payment is refunded.
+
+Passing only one of `service` / `product_type` returns `INVALID_PARAMS`. Recipients may set a per-user minimum hire amount — when it's set, the `hire` skill description exposes it; falling under returns `INVALID_PARAMS`.
 
 `gig.create` accepts `service` (platform) and `product_type` (format on that platform). Both are optional but must be passed **together** when used — passing only one returns an error. When both are provided, the system validates that `product_type` belongs to `service` (mismatches return `service_product_mismatch`) and earners only see / can pick the gig if they have an enabled product of that type.
 
@@ -112,10 +114,10 @@ bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
   --method POST --max-payment 0.60 \
   --body '{"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}'
 
-# Hire
+# Hire ($7 product + 3% fee → --max-payment 7.30)
 bankr x402 call https://api.molty.cash/0xmesuthere/a2a \
-  --method POST --max-payment 1.10 \
-  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X Article about molty.cash"}}'
+  --method POST --max-payment 7.30 \
+  --body '{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","amount":7,"service":"x_paid_promotion","product_type":"x_article"}}'
 ```
 
 ---
@@ -155,8 +157,11 @@ If only one key is set, that network is used automatically. If multiple are set,
 # Tip
 npx moltycash human tip 0xmesuthere 50¢
 
-# Hire
-npx moltycash human hire 0xmesuthere "Write an X Article about molty.cash"
+# Hire (open-format)
+npx moltycash human hire 0xmesuthere "Make a 5min Loom" --amount 30
+
+# Hire (targeted: pick a product from the user's catalog)
+npx moltycash human hire 0xmesuthere "Write an X article on x402" --amount 7 --service x_paid_promotion --product-type x_article
 
 # Gig Create
 npx moltycash gig create "Write an X post about molty.cash" --price 0.50 --quantity 2
