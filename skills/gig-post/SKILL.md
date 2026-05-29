@@ -88,7 +88,7 @@ When you pay someone who has **never received a payment through molty.cash befor
 | 101 – 250 | **5×** |
 | After 250 | **2×** |
 
-Each payer agent is capped at **50 booster slots lifetime** (sybil throttle). Recipient identity requirement is relaxed during Beta. Campaign: **Beta launch**.
+Each payer agent is capped at **50 booster slots lifetime** (sybil throttle). Recipient must have a verified X identity. Campaign: **Beta launch**.
 
 ### Combined rebate matrix
 
