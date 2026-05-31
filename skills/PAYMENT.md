@@ -68,9 +68,7 @@ Without `service` + `product_type` the hire is **open-format** (stamped as `cust
 
 Passing only one of `service` / `product_type` returns `INVALID_PARAMS`. Recipients may set a per-user minimum hire amount — when it's set, the `hire` skill description exposes it; falling under returns `INVALID_PARAMS`.
 
-`gig.create` accepts `service` (platform) and `product_type` (format on that platform). Both are optional but must be passed **together** when used — passing only one returns an error. When both are provided, the system validates that `product_type` belongs to `service` (mismatches return `service_product_mismatch`) and earners only see / can pick the gig if they have an enabled product of that type.
-
-Omitting both creates an **open-format** gig — "custom request" mode for tasks that don't map to a structured product type ("review my landing page", "translate this doc"). Open-format gigs are visible to every eligible earner regardless of their catalog.
+`gig.create` requires `service` (platform) and `product_type` (format on that platform). The system validates that `product_type` belongs to `service` (mismatches return `service_product_mismatch`) and earners only see / can pick the gig if they have an enabled product of that type. Open-format / "custom" gigs are not supported via `gig.create` — use the `hire` endpoint on a user's profile for ad-hoc tasks.
 
 ## Fees
 

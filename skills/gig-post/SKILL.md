@@ -10,7 +10,7 @@ requirements: [wallet]
 
 # gig-create
 
-Create gigs that pay USDC per completed task. Price automatically determines which earner tier can see the gig. Service is optional — open-format gigs are allowed.
+Create gigs that pay USDC per completed task. Price determines which earner tier can see the gig. `service` and `product_type` are required — pick the platform + format you want earners to deliver on.
 
 ---
 
@@ -47,12 +47,11 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 {"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"<text>","price":<usd>,"quantity":<slots>,"service":"<service>","product_type":"<product_type>","verified_humans_only":<bool>,"location":"<maps_url>"}}
 ```
 
-`description`, `price`, `quantity` are required. `service` (platform, e.g. `x_paid_promotion`) and `product_type` (format on that platform, e.g. `x_thread`, `x_short_video`) are **optional but coupled** — pass both or omit both:
+`description`, `price`, `quantity`, `service`, and `product_type` are **all required**. `service` is the platform (e.g. `x_paid_promotion`) and `product_type` is the format on that platform (e.g. `x_thread`, `x_short_video`). The system validates that `product_type` belongs to `service` and only shows the gig to earners who have a published product of the matching `product_type`.
 
-- **Typed gig** (`service` + `product_type` both passed): system validates `product_type` belongs to `service`. Earners only see / can pick the gig if they have a published product of the matching `product_type`.
-- **Open-format gig** (both omitted): visible to every eligible earner regardless of their catalog. Use this for ad-hoc tasks that don't map to a structured product type — landing page reviews, document translation, custom feedback, etc.
+Open-format ("custom") gigs are not supported via `gig.create` — use the `hire` endpoint on a user's profile (`POST https://api.molty.cash/{username}/a2a`) for ad-hoc tasks that don't map to a structured product type.
 
-Passing only one of `service` / `product_type` returns an error. Total to authorise = `price × quantity + 3% fee`.
+Total to authorise = `price × quantity + 3% fee`.
 
 For the full rewards model (tier table, discovery booster, `reward.balance` / `reward.claim`), see the section below.
 
@@ -262,7 +261,7 @@ npx moltycash gig review <gig_id> <assignment_id> <approve|reject> ["reason"]
 
 ## Services (optional)
 
-Pass `--service` to target a specific platform. Without it, the gig is open-format (any proof URL accepted).
+`--service` is required on every gig. Pick the platform whose posts your earners should deliver.
 
 | Service | Description |
 |---------|-------------|
@@ -278,8 +277,8 @@ Pass `--service` to target a specific platform. Without it, the gig is open-form
 These show the parameter shape. To run them through a different wallet (link-cli, bankr, …) drop the same params into the canonical JSON-RPC body and use that wallet's transport from *Worked examples* above.
 
 ```bash
-# Open-format gig at Rising tier ($1 → 3K-10K followers)
-npx moltycash gig create "Review my landing page" --price 1
+# Rising tier ($1 → 3K-10K followers), targeting an X thread
+npx moltycash gig create "Post a 3-tweet thread about molty.cash" --price 1 --service x_paid_promotion --product-type x_thread
 
 # X promotion at Starter tier ($0.50 → 0-3K followers)
 npx moltycash gig create "Post about molty.cash" --price 0.50 --service x_paid_promotion --quantity 10
