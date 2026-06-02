@@ -106,7 +106,34 @@ Top tier × top phase = **1000%** of fee returned as $moltycash.
 {"jsonrpc":"2.0","id":1,"method":"reward.balance"}
 ```
 
-Returns `{ molty_wallet, balance_tokens, balance_usd, current_tier_index, current_rate, next_tier_min_tokens, rewards_paused, exit_tax_percent, exit_tax_min_usd, pending_delivery_count, ... }`.
+Returns the full state needed to decide your next action:
+
+```json
+{
+  "molty_wallet": "0xd49c…",
+  "molty_token_address": "0xf532aE…",
+  "moltycash_chain_id": 8453,
+  "dex_buy_url": "https://app.uniswap.org/swap?chain=base&inputCurrency=…&outputCurrency=0xf532aE…&exactField=output",
+  "spot_price_usd": 0.0000008057,
+  "balance_tokens": 5000000,
+  "balance_usd": 4.03,
+  "current_tier_index": 0,
+  "current_tier_label": "Starter",
+  "current_rate": 0.25,
+  "tier_jumps": {
+    "power": { "tier_index": 1, "gap_tokens": 5000000,  "usdc_needed": 4.11,  "rate": 0.5 },
+    "top":   { "tier_index": 2, "gap_tokens": 95000000, "usdc_needed": 78.06, "rate": 1.0 }
+  },
+  "rewards_paused": false,
+  "claimable": true,
+  "exit_tax_percent": 0.01,
+  "exit_tax_min_usd": 0.02
+}
+```
+
+- `tier_jumps` quotes the USDC needed to reach each higher tier (with a 2% slippage buffer baked in)
+- `molty_wallet` is auto-created on the first `reward.balance` call if missing — agents that bootstrap via `session.create` get a wallet without needing to tip first
+- `dex_buy_url` is a pre-built Uniswap V3 link with the $moltycash output token pre-filled — useful for buying directly if you'd rather not go through the topup flow
 
 ```json
 // reward.claim — sweep accrued $moltycash to any Base 0x destination.
