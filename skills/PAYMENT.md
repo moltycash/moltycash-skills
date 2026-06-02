@@ -131,7 +131,6 @@ Returns the full state needed to decide your next action:
   "molty_wallet": "0xd49c…",
   "molty_token_address": "0xf532aE…",
   "moltycash_chain_id": 8453,
-  "dex_buy_url": "https://app.uniswap.org/swap?chain=base&inputCurrency=…&outputCurrency=0xf532aE…&exactField=output",
   "spot_price_usd": 0.0000008057,
   "balance_tokens": 5000000,
   "balance_usd": 4.03,
@@ -139,8 +138,8 @@ Returns the full state needed to decide your next action:
   "current_tier_label": "Starter",
   "current_rate": 0.25,
   "tier_jumps": {
-    "power": { "tier_index": 1, "gap_tokens": 5000000,  "usdc_needed": 4.11,  "rate": 0.5 },
-    "top":   { "tier_index": 2, "gap_tokens": 95000000, "usdc_needed": 78.06, "rate": 1.0 }
+    "power": { "tier_index": 1, "required_moltycash_tokens": 5000000,  "usdc_needed": 4.11,  "reward_percentage": 50 },
+    "top":   { "tier_index": 2, "required_moltycash_tokens": 95000000, "usdc_needed": 78.06, "reward_percentage": 100 }
   },
   "rewards_paused": false,
   "claimable": true,
@@ -149,9 +148,8 @@ Returns the full state needed to decide your next action:
 }
 ```
 
-- `tier_jumps` quotes the USDC needed to reach each higher tier (with a 2% slippage buffer baked in)
-- `molty_wallet` is auto-created on your first paid call (`tip` / `hire` / `gig.create`). Until then `reward.balance` returns `molty_wallet: null`.
-- `dex_buy_url` is a pre-built Uniswap V3 link with the $moltycash output token pre-filled — useful for buying directly if you'd rather not go through the topup flow
+- `tier_jumps` quotes the USDC needed to reach each higher tier (with a 2% slippage buffer baked in). `required_moltycash_tokens` is the on-chain gap; `reward_percentage` is the rebate at that tier (50 = 50%).
+- `molty_wallet` is auto-created on your first paid call (`tip` / `hire` / `gig.create`). Until then `reward.balance` errors with `-32603 no_molty_wallet` — make a paid call first to provision.
 
 ```json
 // reward.claim — sweep accrued $moltycash to any Base 0x destination.
