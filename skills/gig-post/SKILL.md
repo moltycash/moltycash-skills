@@ -160,7 +160,6 @@ npx moltycash reward claim --destination 0xYourBaseAddr --network base
 
 - **Paid on actual payout** — refunded hires and unclaimed gig slots never mint rewards.
 - **Stripe payments earn rewards** on `tip` / `hire` / `gig.create`, same tier math as crypto payments. Stripe Link payments key off the stable Customer ID (`cus_xxx`) so repeat payers share one molty wallet.
-- **Pre-TGE**: entries are recorded as pending USD credits; on-chain delivery happens once the rewards wallet ships.
 - **Wallet-only payers** (no X identity) earn into a wallet-keyed molty profile auto-created on first payment. No signup, no KYC. `reward.balance` / `reward.claim` work with the session token.
 
 <!-- REWARDS_SECTION_END -->
