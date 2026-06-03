@@ -136,7 +136,14 @@ Returns the full state needed to decide your next action:
   "balance_usd": 4.03,
   "current_tier_index": 0,
   "current_tier_label": "Starter",
-  "current_rate": 0.25,
+  "current_percentage": 25,
+  "next_tier_min_tokens": 10000000,
+  "next_tier_percentage": 50,
+  "tiers": [
+    { "min_tokens": 0, "reward_percentage": 25, "label": "Starter" },
+    { "min_tokens": 10000000, "reward_percentage": 50, "label": "Power" },
+    { "min_tokens": 100000000, "reward_percentage": 100, "label": "Top" }
+  ],
   "tier_jumps": {
     "power": { "tier_index": 1, "required_moltycash_tokens": 5000000,  "usdc_needed": 4.11,  "reward_percentage": 50 },
     "top":   { "tier_index": 2, "required_moltycash_tokens": 95000000, "usdc_needed": 78.06, "reward_percentage": 100 }
