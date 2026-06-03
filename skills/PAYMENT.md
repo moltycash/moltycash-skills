@@ -89,11 +89,11 @@ Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash**
 
 | Tier | $moltycash held | Base rebate on platform fee |
 |---|---|---|
-| Starter | 0 – 10M | 25% |
-| Power | 10M – 100M | 50% |
-| Top | 100M+ | 100% |
+| Starter | 0 – 1M | 25% |
+| Power | 1M – 10M | 50% |
+| Top | 10M+ | 100% |
 
-Hold 100M $moltycash in your molty wallet and your tier rate is **100%** — the platform is fee-neutral at this tier. Token-count denominated, so price moves never drop your tier.
+Hold 10M $moltycash in your molty wallet and your tier rate is **100%** — the platform is fee-neutral at this tier. Token-count denominated, so price moves never drop your tier.
 
 ### Discovery Booster — paying brand-new recipients
 
