@@ -132,21 +132,21 @@ Returns the full state needed to decide your next action:
   "molty_token_address": "0xf532aE…",
   "moltycash_chain_id": 8453,
   "spot_price_usd": 0.0000008057,
-  "balance_tokens": 5000000,
-  "balance_usd": 4.03,
+  "balance_tokens": 500000,
+  "balance_usd": 0.40,
   "current_tier_index": 0,
   "current_tier_label": "Starter",
   "current_percentage": 25,
-  "next_tier_min_tokens": 10000000,
+  "next_tier_min_tokens": 1000000,
   "next_tier_percentage": 50,
   "tiers": [
     { "min_tokens": 0, "reward_percentage": 25, "label": "Starter" },
-    { "min_tokens": 10000000, "reward_percentage": 50, "label": "Power" },
-    { "min_tokens": 100000000, "reward_percentage": 100, "label": "Top" }
+    { "min_tokens": 1000000, "reward_percentage": 50, "label": "Power" },
+    { "min_tokens": 10000000, "reward_percentage": 100, "label": "Top" }
   ],
   "tier_jumps": {
-    "power": { "tier_index": 1, "required_moltycash_tokens": 5000000,  "usdc_needed": 4.11,  "reward_percentage": 50 },
-    "top":   { "tier_index": 2, "required_moltycash_tokens": 95000000, "usdc_needed": 78.06, "reward_percentage": 100 }
+    "power": { "tier_index": 1, "required_moltycash_tokens": 500000,  "usdc_needed": 0.41,  "reward_percentage": 50 },
+    "top":   { "tier_index": 2, "required_moltycash_tokens": 9500000, "usdc_needed": 7.81, "reward_percentage": 100 }
   },
   "rewards_paused": false,
   "claimable": true,
