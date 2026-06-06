@@ -24,7 +24,7 @@ Options to offer:
 
 | Choice | When |
 |---|---|
-| A specific catalog wallet (`bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay.sh`, `link-cli`) | The human picks one |
+| A specific catalog wallet (`bankr`, `circle`, `lobstercash`, `solid`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay.sh`, `link-cli`) | The human picks one |
 | "Scan my system" | The human asks you to detect what's installed — fetch [agentic-wallets/SKILL.md](https://molty.cash/skills/agentic-wallets/SKILL.md) and run its `detect_wallets` probe |
 | **moltycash CLI fallback** | The human has no third-party wallet CLI installed; signs with `*_PRIVATE_KEY` env vars (see the bottom of this file) |
 
@@ -191,6 +191,7 @@ Auth uses a **session token** (`X-Molty-Session-Token` header) — required at P
 | **bankr** | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/bankr.md |
 | **circle** (smart accounts) | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/circle.md |
 | **lobstercash** | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/lobstercash.md |
+| **solid** | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/solid.md |
 | **moonpay** | x402 | Solana | https://molty.cash/skills/agentic-wallets/wallets/moonpay.md |
 | **onchainos** (OKX TEE-signed) | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/onchainos.md |
 | **pay.sh** (`@solana/pay`) | x402 | Solana | https://molty.cash/skills/agentic-wallets/wallets/pay-sh.md |
@@ -221,6 +222,7 @@ npx moltycash reward claim --destination 0xYourBaseAddr --network base
 | bankr | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/bankr.md |
 | circle | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/circle.md |
 | lobstercash | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/lobstercash.md |
+| solid | Base | x402 | https://molty.cash/skills/agentic-wallets/wallets/solid.md |
 | awal | Base, Solana | x402 | https://molty.cash/skills/agentic-wallets/wallets/awal.md |
 | purl | Base, Solana, Tempo | x402 (Base, Solana), MPP (Tempo) | https://molty.cash/skills/agentic-wallets/wallets/purl.md |
 | agentcash | Base, Solana, Tempo | x402 (Base, Solana), MPP (Tempo) | https://molty.cash/skills/agentic-wallets/wallets/agentcash.md |
@@ -237,7 +239,7 @@ npx moltycash reward claim --destination 0xYourBaseAddr --network base
 curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 ```
 
-`<wallet>` ∈ `bankr`, `circle`, `lobstercash`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay-sh`, `link-cli`.
+`<wallet>` ∈ `bankr`, `circle`, `lobstercash`, `solid`, `awal`, `purl`, `agentcash`, `onchainos`, `tempo`, `moonpay`, `pay-sh`, `link-cli`.
 
 ## Putting it together
 
