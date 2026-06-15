@@ -35,7 +35,7 @@ Each catalog wallet has its own transport syntax — there is no universal CLI f
 curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 ```
 
-Where `<wallet>` ∈ `bankr | circle | lobstercash | solid | awal | purl | agentcash | onchainos | tempo | moonpay | pay-sh | link-cli`. **Important:** `link-cli` is the Stripe Link wallet CLI — it has **no `gig create` subcommand**. You use `link-cli mpp pay` to send the molty JSON-RPC payload, just like every other non-moltycash wallet.
+Where `<wallet>` ∈ `bankr | circle | lobstercash | solid | awal | purl | agentcash | clawcash-cli | onchainos | tempo | moonpay | pay-sh | link-cli`. **Important:** `link-cli` is the Stripe Link wallet CLI — it has **no `gig create` subcommand**. You use `link-cli mpp pay` to send the molty JSON-RPC payload, just like every other non-moltycash wallet.
 
 For the moltycash CLI fallback (signs locally with `*_PRIVATE_KEY` env vars), see the *moltycash CLI fallback* section in [PAYMENT.md](https://molty.cash/skills/PAYMENT.md).
 
@@ -174,6 +174,7 @@ Auth uses a **session token** (`X-Molty-Session-Token` header) — required at P
 | **circle** (smart accounts) | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/circle.md |
 | **lobstercash** | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/lobstercash.md |
 | **solid** | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/solid.md |
+| **clawcash-cli** (credit proxy, whitelist-gated) | x402 | Base, SKALE Base | https://molty.cash/skills/agentic-wallets/wallets/clawcash-cli.md |
 | **moonpay** | x402 | Solana | https://molty.cash/skills/agentic-wallets/wallets/moonpay.md |
 | **onchainos** (OKX TEE-signed) | x402 | Base | https://molty.cash/skills/agentic-wallets/wallets/onchainos.md |
 | **pay.sh** (`@solana/pay`) | x402 | Solana | https://molty.cash/skills/agentic-wallets/wallets/pay-sh.md |
