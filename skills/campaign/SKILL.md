@@ -34,13 +34,13 @@ Creating and topping up a campaign requires payment (prepaid USDC credits — on
 {"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"credits":20,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":7,"release_mode":"auto"}}
 ```
 
-Required: `cpm_rate`, `max_payout_per_submission`, `credits`, `description`.
+Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 
 | Param | Meaning |
 |---|---|
 | `cpm_rate` | Payout tokens per 1,000 views |
 | `max_payout_per_submission` | Hard cap paid per post (this is what's reserved per credit) |
-| `credits` | Prepaid submission slots to buy (one per earner submission) |
+| `credits` | Prepaid submission slots (one per earner submission). **Optional** — a standard default grant is used if omitted. The campaign pauses when credits run out; `campaign.topup` adds more |
 | `payout_chain` | `solana` (default) or `base` |
 | `token_contract` | SPL mint (Solana) or ERC-20 address (Base). **Optional — defaults to USDC** on the payout chain |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required for USDC** |
