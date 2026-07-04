@@ -38,7 +38,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 
 | Param | Meaning |
 |---|---|
-| `cpm_rate` | Payout tokens per 1,000 views |
+| `cpm_rate` | **MAX** payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. |
 | `max_payout_per_submission` | Hard cap paid per post (reserved from your payout-token funding per submission) |
 | `credits` | Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~8 over a 7-day window). **Optional** — a default grant (~$1) is used if omitted. **Submissions are not capped by credits** — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it |
 | `payout_chain` | `solana` (default) or `base` |
