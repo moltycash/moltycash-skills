@@ -40,6 +40,10 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 |---|---|
 | `cpm_rate` | **MAX** payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. |
 | `max_payout_per_submission` | Hard cap paid per post (reserved from your payout-token funding per submission) |
+| `min_holder_amount` | **Optional.** Minimum amount of the campaign token the earner must hold at their payout address to submit. 0 / omit = no requirement. Display units (same token, same decimals). |
+| `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
+| `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
+| `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `credits` | Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~8 over a 7-day window). **Optional** — a default grant (~$1) is used if omitted. **Submissions are not capped by credits** — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it |
 | `payout_chain` | `solana` (default) or `base` |
 | `token_contract` | SPL mint (Solana) or ERC-20 address (Base). **Optional — defaults to USDC** on the payout chain |
@@ -62,7 +66,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `campaign.release` `{campaign_id, submission_id, views}` | session token | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
 | `campaign.close` `{campaign_id, refund_address}` | session token | Reject in-flight submissions, sweep the wallet's remaining balance to `refund_address`, mark closed |
 
-CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release).
+CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
 
 ---
 
@@ -73,7 +77,7 @@ Earner methods require an identity token (`X-Molty-Identity-Token`; get one at h
 | Method | What it does |
 |---|---|
 | `campaign.list` `{}` | Browse active campaigns you can submit to |
-| `campaign.submit` `{campaign_id, proof}` | Submit your post URL. Verified: original tweet, authored by your connected X handle, ticker mentioned (unless USDC), posted after launch. You need a payout destination on the campaign's chain |
+| `campaign.submit` `{campaign_id, proof}` | Submit your post URL. Verified: original tweet, authored by your connected X handle, ticker mentioned (unless USDC), posted after launch. You need a payout destination on the campaign's chain. Gates (if set): `min_holder_amount` (payout address must hold enough token), `min_followers` (X follower floor), `min_account_age_days` (X account age floor). If `min_views_threshold` is set, submission is accepted immediately but payout is deferred until the post clears the view floor. |
 
 CLI: `moltycash campaign list` then `moltycash campaign submit <campaign_id> <post_url>`.
 
