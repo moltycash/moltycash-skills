@@ -40,7 +40,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 |---|---|
 | `cpm_rate` | **MAX** payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. |
 | `max_payout_per_submission` | Hard cap paid per post (reserved from your payout-token funding per submission) |
-| `min_holder_amount` | **Optional.** Minimum amount of the campaign token the earner must hold at their payout address to submit. 0 / omit = no requirement. Display units (same token, same decimals). |
+| `min_holder_amount` | **Optional.** Minimum amount of the campaign token the earner must hold at their payout address **to submit and receive each payout**. Defaults to $5 worth of the token (computed at creation via DexScreener) for non-USDC campaigns; USDC campaigns have no default. Pass 0 to disable. Display units (same token, same decimals). |
 | `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
@@ -52,7 +52,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
 | `releaser` | agent mode: a wallet allowed to authorize releases besides the owner |
 
-**Fee:** `credits × $0.02` USDC, prepaid — **minimum $1** (50 credits) on both create and topup. One credit = one settle event, so the fee is molty's real per-event cost (X read + on-chain transfer). Submissions themselves are unbounded (owner rejects unwanted ones within the 2h window; funding covers payouts); credits only meter the settlement work.
+**Fee:** Flat **$1 USDC** to create (covers the credit grant regardless of count). Topup: `credits × $0.02`, minimum **$1** (50 credits). One credit = one settle event (X view-read + on-chain payout). Submissions are unbounded — credits meter molty's settlement work; the campaign pauses when credits run out and resumes on topup. **3% commission** is swept from the campaign wallet on each earner payout, added on top of the earner amount — plan for ~3% more token funding than pure CPM math.
 
 `campaign.create` returns a `wallet_address` — **fund it by sending the payout token** (or USDC) to that address on the payout chain. It also mints a wallet session token used by the owner-only methods below.
 
@@ -77,7 +77,7 @@ Earner methods require an identity token (`X-Molty-Identity-Token`; get one at h
 | Method | What it does |
 |---|---|
 | `campaign.list` `{}` | Browse active campaigns you can submit to |
-| `campaign.submit` `{campaign_id, proof}` | Submit your post URL. Verified: original tweet, authored by your connected X handle, ticker mentioned (unless USDC), posted after launch. You need a payout destination on the campaign's chain. Gates (if set): `min_holder_amount` (payout address must hold enough token), `min_followers` (X follower floor), `min_account_age_days` (X account age floor). If `min_views_threshold` is set, submission is accepted immediately but payout is deferred until the post clears the view floor. |
+| `campaign.submit` `{campaign_id, proof}` | Submit your post URL. Verified: original tweet, authored by your connected X handle, ticker mentioned (unless USDC), posted after launch. You need a payout destination on the campaign's chain. Gates (if set): `min_holder_amount` (payout address must hold enough token — also re-checked at each payout), `min_followers` (X follower floor), `min_account_age_days` (X account age floor). If `min_views_threshold` is set, submission is accepted immediately but payout is deferred until the post clears the view floor. **One active submission per campaign per earner** — you cannot re-submit to the same campaign until the prior post's tracking window closes (even if it already hit the payout cap). |
 
 CLI: `moltycash campaign list` then `moltycash campaign submit <campaign_id> <post_url>`.
 
