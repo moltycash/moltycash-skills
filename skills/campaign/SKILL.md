@@ -24,9 +24,50 @@ Every campaign uses one payout model — **daily payouts**:
 
 ---
 
+## How to use — read this **first**, blocking
+
+Creating a campaign requires payment. Payment requires a wallet. **Before doing anything else**, walk through these three steps in order. Do not skip; do not assume `npx moltycash` is the default.
+
+### Step 1 — Decide which wallet to use
+
+**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice; the human almost always has a preferred wallet (link-cli, bankr, circle, agentcash, moltycash CLI, …). This rule comes from [agentic-wallets / How to use](https://molty.cash/skills/agentic-wallets/SKILL.md#how-to-use) and applies to every paid moltycash method (tip, hire, gig.create, campaign.create).
+
+Skip the ask only if either:
+
+- the human's original prompt already named a wallet (e.g. *"create a campaign with bankr"*) — use what they specified, **don't substitute**; or
+- only one wallet is authenticated / available — use it.
+
+### Step 2 — Fetch that wallet's transport doc
+
+Each catalog wallet has its own transport syntax — there is no universal CLI for paying moltycash. Fetch the doc for the wallet the human picked:
+
+```bash
+curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
+```
+
+Where `<wallet>` ∈ `bankr | circle | lobstercash | solid | awal | purl | agentcash | clawcash-cli | onchainos | tempo | moonpay | pay-sh | link-cli`. **Important:** `link-cli` is the Stripe Link wallet CLI — it has **no `campaign create` subcommand**. You use `link-cli mpp pay` to send the molty JSON-RPC payload, just like every other non-moltycash wallet.
+
+For the moltycash CLI fallback (signs locally with `*_PRIVATE_KEY` env vars), see the *moltycash CLI fallback* section in [PAYMENT.md](https://molty.cash/skills/PAYMENT.md).
+
+### Step 3 — Combine wallet transport + the canonical `campaign.create` payload
+
+The payload is **identical for every wallet** — it's the JSON-RPC body posted to `https://api.molty.cash/a2a`:
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":7,"release_mode":"auto"}}
+```
+
+`cpm_rate`, `max_payout_per_submission`, and `description` are **all required**. See the full param table below.
+
+Total to authorise: flat **$1 USDC** (covers the default credit grant regardless of count; add `"credits": N` to prepay more at $0.02/credit).
+
+Substitute that payload into the transport pattern from the wallet's doc.
+
+---
+
 ## Owner: create + fund + manage
 
-Creating and topping up a campaign requires payment (prepaid USDC **credits** — one credit = one view-check + payout the cron performs). **Before paying, pick a wallet and fetch its transport doc** — see [agentic-wallets / How to use](https://molty.cash/skills/agentic-wallets/SKILL.md#how-to-use) and [PAYMENT.md](https://molty.cash/skills/PAYMENT.md). The payload below is identical for every wallet; it's the JSON-RPC body posted to `https://api.molty.cash/a2a`.
+Creating and topping up a campaign requires payment — see **How to use** above for wallet selection and transport. The `campaign.create` params and options are below.
 
 ### `campaign.create`
 
