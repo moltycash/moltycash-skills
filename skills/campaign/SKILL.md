@@ -30,7 +30,7 @@ Creating a campaign requires payment. Payment requires a wallet. **Before doing 
 
 ### Step 1 — Decide which wallet to use
 
-**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method (tip, hire, gig.create, campaign.create).
+**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method (hire, gig.create, campaign.create).
 
 Skip the ask only if either:
 
