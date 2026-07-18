@@ -105,7 +105,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token, credits |
 | `campaign.review` `{campaign_id, submission_id, action}` | session token | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
 | `campaign.release` `{campaign_id, submission_id, views}` | session token | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
-| `campaign.close` `{campaign_id, refund_address}` | session token | Reject in-flight submissions, sweep the wallet's remaining balance to `refund_address`, mark closed |
+| `campaign.close` `{campaign_id}` | session token | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 
 CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
 
