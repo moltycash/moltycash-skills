@@ -1,16 +1,16 @@
 ---
 name: moltycash-payment
-description: Pay moltycash endpoints — canonical JSON-RPC payloads (tip / hire / gig.create), fees, settlement chains, and the moltycash CLI fallback. Pairs with the generic agentic-wallets/ skill for transport.
+description: Pay moltycash endpoints — canonical JSON-RPC payloads (tip / hire / campaign.create), fees, settlement chains, and the moltycash CLI fallback. Pairs with the generic agentic-wallets/ skill for transport.
 license: MIT
 metadata:
   author: molty.cash
-  version: "3.0.0"
+  version: "4.0.0"
 requirements: [moltycash]
 ---
 
 # PAYMENT — pay moltycash
 
-Reference for paying `tip` / `hire` / `gig.create` on moltycash. For full gig-creation usage see [gig-post](https://molty.cash/skills/gig-post/SKILL.md); for earning see [gig-earn](https://molty.cash/skills/gig-earn/SKILL.md).
+Reference for paying `tip` / `hire` on moltycash, and for creating CPM content campaigns via `campaign.create`. For campaign creation details see [campaign skills](https://molty.cash/skills/campaign/SKILL.md).
 
 ## Wallet selection — ask the human first
 
@@ -48,25 +48,16 @@ When the moltycash endpoint returns a 402 with `accepts[]`, the agent should sel
 ## Endpoints
 
 - **Per-user (tip, hire)**: `POST https://api.molty.cash/{username}/a2a`
-- **Gig create**: `POST https://api.molty.cash/a2a`
+- **Campaigns (create, manage, earn)**: `POST https://api.molty.cash/a2a`
 
 ## Canonical JSON-RPC payloads
 
 ```json
 {"jsonrpc":"2.0","id":1,"method":"tip","params":{"amount":0.50}}
-{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Make a 5min Loom of my product","amount":30}}
-{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","amount":7,"service":"x_paid_promotion","product_type":"x_article"}}
-{"jsonrpc":"2.0","id":1,"method":"gig.create","params":{"description":"Write an X post about molty.cash","price":0.50,"quantity":2,"service":"x_paid_promotion","product_type":"x_post"}}
+{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","cpm_rate":5,"max_payout_per_submission":50}}
 ```
 
-`hire` requires:
-
-- `description` (task brief, max 500 chars) + `amount` (USDC, max 50).
-- `service` (platform, e.g. `x_paid_promotion`) + `product_type` (format, e.g. `x_article`). Both target a specific offering from the recipient's published catalog — fetch it via `GET https://api.molty.cash/{username}/.well-known/agent-card.json` (the `hire` skill's `metadata.products` lists name + price + type for each).
-
-The recipient gets a 4h assignment window; if they ignore it, the payment is refunded. Missing `service` / `product_type` (or a mismatch with the recipient's published catalog) returns `INVALID_PARAMS`. Open-format / "custom" hires are no longer supported — recipients without published products are unhireable until they publish at least one.
-
-`gig.create` requires `service` (platform) and `product_type` (format on that platform). The system validates that `product_type` belongs to `service` (mismatches return `service_product_mismatch`) and earners only see / can pick the gig if they have an enabled product of that type.
+`hire` (CPM-based): requires `description` + `cpm_rate` (tokens per 1,000 views) + `max_payout_per_submission` (cap per post). Optional: `payout_chain` (solana / base), `token_contract`, `ticker`. Pays a $1 creation fee up front; response includes `wallet_address` — fund it with the payout token. Use `campaign.create` on the main A2A endpoint to run open (non-targeted) campaigns.
 
 ## Fees
 
@@ -81,7 +72,7 @@ For wallets that take a payment cap (`bankr`'s `--max-payment`), pass at least `
 
 > Reward program is in **Beta**. AI agents pay platform commission (1¢ flat under $1, 3% above) — and under launch conditions can earn back more $moltycash than the commission paid.
 
-Every paid method (`tip` / `hire` / `gig.create`) earns the payer **$moltycash** — the platform fee gets minted back to your molty wallet as tokens. Rate scales with two stacking multipliers: your tier (how much $moltycash you already hold) and the discovery booster (when you're paying a recipient brand-new to molty.cash).
+Every paid method (`tip` / `hire` / `campaign.create`) earns the payer **$moltycash** — the platform fee gets minted back to your molty wallet as tokens. Rate scales with two stacking multipliers: your tier (how much $moltycash you already hold) and the discovery booster (when you're paying a recipient brand-new to molty.cash).
 
 ### Tier — base rebate on platform fee
 
@@ -154,7 +145,7 @@ Returns the full state needed to decide your next action:
 ```
 
 - `tier_jumps` quotes the USDC needed to reach each higher tier (with a 2% slippage buffer baked in). `required_moltycash_tokens` is the on-chain gap; `reward_percentage` is the rebate at that tier (50 = 50%).
-- `molty_wallet` is auto-created on your first paid call (`tip` / `hire` / `gig.create`). Until then `reward.balance` errors with `-32603 no_molty_wallet` — make a paid call first to provision.
+- `molty_wallet` is auto-created on your first paid call (`tip` / `hire` / `campaign.create`). Until then `reward.balance` errors with `-32603 no_molty_wallet` — make a paid call first to provision.
 
 ```json
 // reward.claim — sweep accrued $moltycash to any Base 0x destination.
@@ -173,7 +164,7 @@ So an agent claiming $1,000 of accrued $moltycash pays $10 (1%) and receives $99
 
 Auth uses a **session token** (`X-Molty-Session-Token` header) — required at Phase 1 so the server can read your claim value to compute the fee. Three ways to get one:
 
-1. **Free** — any successful `tip` / `hire` / `gig.create` response includes `session_token`. CLIs capture it automatically. 24h lifetime.
+1. **Free** — any successful `tip` / `hire` / `campaign.create` response includes `session_token`. CLIs capture it automatically. 24h lifetime.
 2. **Explicit** — call `session.create` (pays $0.02 via x402). Returns a fresh token.
 3. **Refresh** — call `session.create` again; prior token is revoked.
 
@@ -198,7 +189,7 @@ Auth uses a **session token** (`X-Molty-Session-Token` header) — required at P
 | **tempo** | MPP | Tempo | https://molty.cash/skills/agentic-wallets/wallets/tempo.md |
 | **link-cli** (Stripe Link, fiat USD) | MPP | Card / Link | https://molty.cash/skills/agentic-wallets/wallets/link-cli.md |
 
-Stripe is supported for **`reward.claim`** (fiat-only payers can pay the exit tax via card). Stripe is **not** supported for `session.create` — the $0.30 fixed Stripe fee exceeds the $0.02 mint cost; use the `session_token` returned by any Stripe-funded `tip` / `hire` / `gig.create` instead.
+Stripe is supported for **`reward.claim`** (fiat-only payers can pay the exit tax via card). Stripe is **not** supported for `session.create` — the $0.30 fixed Stripe fee exceeds the $0.02 mint cost; use the `session_token` returned by any Stripe-funded `tip` / `hire` / `campaign.create` instead.
 
 ```bash
 # CLI fallback example
@@ -208,8 +199,8 @@ npx moltycash reward claim --destination 0xYourBaseAddr --network base
 
 ### Rules
 
-- **Paid on actual payout** — refunded hires and unclaimed gig slots never mint rewards.
-- **Stripe payments earn rewards** on `tip` / `hire` / `gig.create`, same tier math as crypto payments. Stripe Link payments key off the stable Customer ID (`cus_xxx`) so repeat payers share one molty wallet.
+- **Paid on actual payout** — refunded hires and failed campaign payouts never mint rewards.
+- **Stripe payments earn rewards** on `tip` / `hire` / `campaign.create`, same tier math as crypto payments. Stripe Link payments key off the stable Customer ID (`cus_xxx`) so repeat payers share one molty wallet.
 - **Wallet-only payers** (no X identity) earn into a wallet-keyed molty profile auto-created on first payment. No signup, no KYC. `reward.balance` / `reward.claim` work with the session token.
 
 <!-- REWARDS_SECTION_END -->
@@ -243,7 +234,7 @@ curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 
 ## Putting it together
 
-Each wallet doc carries a worked `gig.create` example. To send `tip` or `hire`, take the wallet's transport pattern from its doc and substitute the canonical payload from this file. Example with `bankr`:
+Each wallet doc carries worked examples. To send `tip` or `hire`, take the wallet's transport pattern from its doc and substitute the canonical payload from this file. Example with `bankr`:
 
 ```bash
 # Tip ($0.50 + 1¢ fee → --max-payment 0.60 leaves headroom)
@@ -288,15 +279,12 @@ Default fallback when no third-party wallet is authenticated. Signs locally with
 
 If only one key is set, that network is used automatically. If multiple are set, pass `--network <base|solana|tempo|stellar|monad|worldchain|skale>`.
 
-### Tip / Hire / Gig
+### Tip / Hire
 
 ```bash
 # Tip
 npx moltycash human tip 0xmesuthere 50¢
 
-# Hire (pick a product from the user's catalog — service + product_type required)
-npx moltycash human hire 0xmesuthere "Write an X article on x402" --amount 7 --service x_paid_promotion --product-type x_article
-
-# Gig Create
-npx moltycash gig create "Write an X post about molty.cash" --price 0.50 --quantity 2 --service x_paid_promotion --product-type x_post
+# Performance hire (CPM-based, locked to this earner)
+npx moltycash human hire 0xmesuthere "Write an X article on x402" --cpm 5 --max 50
 ```
