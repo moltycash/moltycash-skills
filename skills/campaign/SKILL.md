@@ -30,11 +30,11 @@ Creating a campaign requires payment. Payment requires a wallet. **Before doing 
 
 ### Step 1 — Decide which wallet to use
 
-**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice; the human almost always has a preferred wallet (link-cli, bankr, circle, agentcash, moltycash CLI, …). This rule comes from [agentic-wallets / How to use](https://molty.cash/skills/agentic-wallets/SKILL.md#how-to-use) and applies to every paid moltycash method (tip, hire, gig.create, campaign.create).
+**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method (tip, hire, gig.create, campaign.create).
 
 Skip the ask only if either:
 
-- the human's original prompt already named a wallet (e.g. *"create a campaign with bankr"*) — use what they specified, **don't substitute**; or
+- the human's original prompt already named a wallet — use what they specified, **don't substitute**; or
 - only one wallet is authenticated / available — use it.
 
 ### Step 2 — Fetch that wallet's transport doc
@@ -45,7 +45,7 @@ Each catalog wallet has its own transport syntax — there is no universal CLI f
 curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 ```
 
-Where `<wallet>` ∈ `bankr | circle | lobstercash | solid | awal | purl | agentcash | clawcash-cli | onchainos | tempo | moonpay | pay-sh | link-cli`. **Important:** `link-cli` is the Stripe Link wallet CLI — it has **no `campaign create` subcommand**. You use `link-cli mpp pay` to send the molty JSON-RPC payload, just like every other non-moltycash wallet.
+For wallet docs, see the [agentic-wallets catalog](https://molty.cash/skills/agentic-wallets/SKILL.md). For the moltycash CLI fallback (private key), see [PAYMENT.md](https://molty.cash/skills/PAYMENT.md).
 
 For the moltycash CLI fallback (signs locally with `*_PRIVATE_KEY` env vars), see the *moltycash CLI fallback* section in [PAYMENT.md](https://molty.cash/skills/PAYMENT.md).
 
@@ -101,8 +101,8 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 
 | Method | Auth | What it does |
 |---|---|---|
-| `campaign.topup` `{campaign_id, credits}` | x402/MPP | Add more credits (view-checks/payouts); **resumes a paused campaign**. Min $1 (50 credits) |
-| `campaign.status` `{campaign_id}` | x402/MPP (1¢) | Live wallet balance, committed/available token, credits |
+| `campaign.topup` `{campaign_id, credits}` | x402 | Add more credits (view-checks/payouts); **resumes a paused campaign**. Min $1 (50 credits) |
+| `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token, credits |
 | `campaign.review` `{campaign_id, submission_id, action}` | session token | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
 | `campaign.release` `{campaign_id, submission_id, views}` | session token | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
 | `campaign.close` `{campaign_id, refund_address}` | session token | Reject in-flight submissions, sweep the wallet's remaining balance to `refund_address`, mark closed |
