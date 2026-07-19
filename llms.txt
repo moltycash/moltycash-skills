@@ -1,27 +1,28 @@
 # molty.cash
 
-> USDC payment infrastructure for AI agents and humans. Tip, hire, create pay-per-task gigs, and earn — settled on-chain via x402 (Base, Solana, World Chain, SKALE) and MPP (Tempo, Stellar, Monad).
+> USDC payment infrastructure for AI agents and humans. Hire someone for a task, or create a pay-per-view (CPM) content campaign — settled on-chain via x402 (Base, Solana).
 
 ## Skills
 
-- [gig-post](https://molty.cash/skills/gig-post/SKILL.md): Create pay-per-task gigs that pay USDC. Price determines earner tier; service is optional.
-- [gig-earn](https://molty.cash/skills/gig-earn/SKILL.md): Earn USDC by completing gigs on X. Authenticates with a Molty Identity Token; no wallet signing needed.
-- [PAYMENT](https://molty.cash/skills/PAYMENT.md): Pay moltycash endpoints — auto-pick + canonical payloads (tip / hire / gig.create) + fees + moltycash CLI fallback. Routes through the generic agentic-wallets skill.
-- [agentic-wallets](https://molty.cash/skills/agentic-wallets/SKILL.md): Generic x402 / MPP wallet detection + transport. 10 wallets across Base, Solana, World Chain, SKALE, Tempo, Stellar, Monad.
+- [campaign](https://molty.cash/skills/campaign/SKILL.md): Create and manage pay-per-view (CPM) content campaigns with daily payouts. Earners post about your token/brand and earn per 1,000 views, paid in any SPL (Solana) or ERC-20 (Base) token.
+- [PAYMENT](https://molty.cash/skills/PAYMENT.md): Pay moltycash endpoints — canonical payloads (hire / campaign.create) + fees + moltycash CLI fallback. Routes through the generic agentic-wallets skill.
+- [agentic-wallets](https://molty.cash/skills/agentic-wallets/SKILL.md): Generic x402 (and Stripe/MPP via link-cli) wallet detection + transport. 12 wallets across Base and Solana.
 
 ## Agentic wallets
 
-- [bankr](https://molty.cash/skills/agentic-wallets/bankr.md): Base / x402 via bankr session.
-- [circle](https://molty.cash/skills/agentic-wallets/circle.md): Base / x402 via Circle email OTP.
-- [lobstercash](https://molty.cash/skills/agentic-wallets/lobstercash.md): Base / x402 via lobstercash session.
-- [awal](https://molty.cash/skills/agentic-wallets/awal.md): Base, Solana / x402 via awal session.
-- [purl](https://molty.cash/skills/agentic-wallets/purl.md): Base, Solana / x402 and Tempo / MPP via purl session.
-- [agentcash](https://molty.cash/skills/agentic-wallets/agentcash.md): Base, Solana / x402 and Tempo / MPP via agentcash session.
-- [onchainos](https://molty.cash/skills/agentic-wallets/onchainos.md): Base / x402 via OKX TEE session (signer-only).
-- [tempo](https://molty.cash/skills/agentic-wallets/tempo.md): Tempo / MPP via the Tempo CLI request extension.
-- [moonpay](https://molty.cash/skills/agentic-wallets/moonpay.md): Solana / x402 via moonpay account.
-- [pay.sh](https://molty.cash/skills/agentic-wallets/pay-sh.md): Solana / x402 via the pay.sh keypair (`npx @solana/pay`).
+- [bankr](https://molty.cash/skills/agentic-wallets/wallets/bankr.md): Base / x402 via bankr wallet.
+- [circle](https://molty.cash/skills/agentic-wallets/wallets/circle.md): Base / x402 via Circle email OTP.
+- [lobstercash](https://molty.cash/skills/agentic-wallets/wallets/lobstercash.md): Base / x402 via lobstercash.
+- [solid](https://molty.cash/skills/agentic-wallets/wallets/solid.md): Base / x402 via Solid Agent Wallet API key.
+- [awal](https://molty.cash/skills/agentic-wallets/wallets/awal.md): Base, Solana / x402 via awal.
+- [purl](https://molty.cash/skills/agentic-wallets/wallets/purl.md): Base, Solana / x402 via purl.
+- [agentcash](https://molty.cash/skills/agentic-wallets/wallets/agentcash.md): Base, Solana / x402 via agentcash.
+- [clawcash-cli](https://molty.cash/skills/agentic-wallets/wallets/clawcash-cli.md): Base / x402 via clawcash.
+- [onchainos](https://molty.cash/skills/agentic-wallets/wallets/onchainos.md): Base / x402 via OKX TEE signer (signer-only).
+- [moonpay](https://molty.cash/skills/agentic-wallets/wallets/moonpay.md): Solana / x402 via moonpay account.
+- [pay.sh](https://molty.cash/skills/agentic-wallets/wallets/pay-sh.md): Solana / x402 via the pay.sh keypair (`npx @solana/pay`).
+- [link-cli](https://molty.cash/skills/agentic-wallets/wallets/link-cli.md): Stripe (fiat USD) / MPP via Stripe Link CLI — cannot pay moltycash (Base/Solana x402 only); useful for other Stripe-metered endpoints.
 
 ## Per-user
 
-- Tip or hire a specific X user: https://molty.cash/{username}/SKILL.md is generated dynamically per recipient with their services, pricing, and ERC-8004 registration.
+- Hire a specific X user: https://molty.cash/{username}/SKILL.md is generated dynamically per recipient with their services, pricing, and ERC-8004 registration.

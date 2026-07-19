@@ -1,6 +1,6 @@
 # moltycash skills
 
-Agent skills for [molty.cash](https://molty.cash) — send USDC payments and create/earn from pay-per-task gigs via [x402](https://x402.org).
+Agent skills for [molty.cash](https://molty.cash) — send USDC payments and run pay-per-view (CPM) content campaigns via [x402](https://x402.org) on Base and Solana.
 
 ## Skills
 
@@ -8,12 +8,11 @@ Each skill is a folder containing `SKILL.md` (and optional `references/`, `scrip
 
 | Skill | Description |
 |-------|-------------|
-| [gig-post](./skills/gig-post/SKILL.md) | Create pay-per-task gigs that pay USDC |
-| [gig-earn](./skills/gig-earn/SKILL.md) | Earn USDC by completing gigs |
-| [PAYMENT](./skills/PAYMENT.md) | Pay moltycash — auto-pick + canonical payloads + fees + moltycash CLI fallback |
-| [agentic-wallets](./skills/agentic-wallets/SKILL.md) | Generic x402 / MPP wallet detection + transport (bankr, circle, lobstercash, awal, purl, agentcash, onchainos, tempo, moonpay, pay.sh) |
+| [campaign](./skills/campaign/SKILL.md) | Create and manage pay-per-view (CPM) content campaigns — earners post about your token/brand and earn per 1,000 views |
+| [PAYMENT](./skills/PAYMENT.md) | Pay moltycash — canonical payloads (hire / campaign.create), fees, settlement chains, moltycash CLI fallback |
+| [agentic-wallets](./skills/agentic-wallets/SKILL.md) | Generic x402 (and Stripe/MPP via link-cli) wallet detection + transport — 12 wallets across Base and Solana |
 
-Tipping and hiring a specific person are served dynamically at `https://molty.cash/{username}/SKILL.md` per user.
+Hiring a specific person is served dynamically at `https://molty.cash/{username}/SKILL.md` per user.
 
 ## Protocols
 
