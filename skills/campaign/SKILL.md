@@ -106,23 +106,17 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
 | `campaign.release` `{campaign_id, submission_id, views}` | x402 (1¢) | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
+| `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
-CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
+CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). `moltycash campaign list` shows your own campaigns.
 
 ---
 
-## Earner: find + submit
+## Earner: discover + submit
 
-Earner methods require an identity token (`X-Molty-Identity-Token`; get one at https://molty.cash → Profile → Identity Token).
+This API is campaign-creator/management only — there is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API.
 
-| Method | What it does |
-|---|---|
-| `campaign.list` `{}` | Browse active campaigns you can submit to |
-| `campaign.submit` `{campaign_id, proof}` | Submit your post URL. Verified: original tweet, authored by your connected X handle, ticker mentioned (unless USDC), posted after launch. You need a payout destination on the campaign's chain. Gates (if set): `min_holder_amount` (payout address must hold enough token — also re-checked at each payout), `min_followers` (X follower floor), `min_account_age_days` (X account age floor). If `min_views_threshold` is set, submission is accepted immediately but payout is deferred until the post clears the view floor. **One active submission per campaign per earner** — you cannot re-submit to the same campaign until the prior post's tracking window closes (even if it already hit the payout cap). |
-
-CLI: `moltycash campaign list` then `moltycash campaign submit <campaign_id> <post_url>`.
-
-Once submitted, your post sits for the 2h base-payout window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
+Once a post is accepted it sits for the 2h base-payout window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
 
 ---
 
