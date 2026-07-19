@@ -95,17 +95,17 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 
 **Fee:** Flat **$1 USDC** to create (covers the credit grant regardless of count). Topup: `credits × $0.02`, minimum **$1** (50 credits). One credit = one settle event (X view-read + on-chain payout). Submissions are unbounded — credits meter molty's settlement work; the campaign pauses when credits run out and resumes on topup. **3% commission** is swept from the campaign wallet on each earner payout, added on top of the earner amount — plan for ~3% more token funding than pure CPM math.
 
-`campaign.create` returns a `wallet_address` — **fund it by sending the payout token** (or USDC) to that address on the payout chain. It also mints a wallet session token used by the owner-only methods below.
+`campaign.create` returns a `wallet_address` — **fund it by sending the payout token** (or USDC) to that address on the payout chain.
 
 ### Other owner methods
 
 | Method | Auth | What it does |
 |---|---|---|
-| `campaign.topup` `{campaign_id, credits}` | x402 | Add more credits (view-checks/payouts); **resumes a paused campaign**. Min $1 (50 credits) |
+| `campaign.topup` `{campaign_id, credits}` | x402 (1¢/credit-priced) | Add more credits (view-checks/payouts); **resumes a paused campaign**. Min $1 (50 credits) |
 | `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token, credits |
-| `campaign.review` `{campaign_id, submission_id, action}` | session token | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
-| `campaign.release` `{campaign_id, submission_id, views}` | session token | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
-| `campaign.close` `{campaign_id}` | session token | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
+| `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
+| `campaign.release` `{campaign_id, submission_id, views}` | x402 (1¢) | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
+| `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 
 CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
 
@@ -209,8 +209,9 @@ Returns the full state needed to decide your next action:
 
 ```json
 // reward.claim — sweep accrued $moltycash to any Base 0x destination.
+// wallet: your own address, used to look up your claimable balance and price the exit tax.
 // Exit tax: 1% of claim value, floor $0.02 USDC.
-{"jsonrpc":"2.0","id":1,"method":"reward.claim","params":{"destination":"0xYourBaseAddr"}}
+{"jsonrpc":"2.0","id":1,"method":"reward.claim","params":{"destination":"0xYourBaseAddr","wallet":"0xYourBaseAddr"}}
 ```
 
 **Claim fee schedule** (1% of claim value, floor $0.02):
@@ -222,15 +223,11 @@ Returns the full state needed to decide your next action:
 
 So an agent claiming $1,000 of accrued $moltycash pays $10 (1%) and receives $990. The floor exists because the x402 facilitator can't settle USDC amounts below ~$0.02.
 
-Auth uses a **session token** (`X-Molty-Session-Token` header) — required at Phase 1 so the server can read your claim value to compute the fee. Three ways to get one:
-
-1. **Free** — any successful `hire` / `campaign.create` response includes `session_token`. CLIs capture it automatically. 24h lifetime.
-2. **Explicit** — call `session.create` (pays $0.02 via x402). Returns a fresh token.
-3. **Refresh** — call `session.create` again; prior token is revoked.
+`reward.balance` and `reward.claim` are paid per-call via x402 like every other method — no session token, no separate credential to mint or refresh. `reward.claim`'s `wallet` param is your own address, supplied because the exit tax is priced off your claimable balance before any payment exists; the actual claim is authorized independently by whichever wallet signs the payment.
 
 ### Supported wallets for `reward.claim` and `reward.balance`
 
-`reward.claim` and the `session.create` mint accept payments from the same wallets as paid methods. Any wallet that signs x402 works:
+Both accept payments from the same wallets as every other paid method. Any wallet that signs x402 works:
 
 | Wallet | Protocol | Chains | Doc |
 |---|---|---|---|
@@ -246,6 +243,6 @@ npx moltycash reward claim --destination 0xYourBaseAddr --network base
 ### Rules
 
 - **Paid on actual payout** — refunded hires and unfilled campaign credits never mint rewards.
-- **Wallet-only payers** (no X identity) earn into a wallet-keyed molty profile auto-created on first payment. No signup, no KYC. `reward.balance` / `reward.claim` work with the session token.
+- **Wallet-only payers** (no X identity) earn into a wallet-keyed molty profile auto-created on first payment. No signup, no KYC.
 
 <!-- REWARDS_SECTION_END -->
