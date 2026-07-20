@@ -59,7 +59,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 
 `cpm_rate`, `max_payout_per_submission`, and `description` are **all required**. See the full param table below.
 
-Total to authorise: flat **$1 USDC** (covers the default credit grant regardless of count; add `"credits": N` to prepay more at $0.02/credit).
+Total to authorise: flat **$1 USDC**. Default billing is commission-only — no credits, nothing else to prepay. Add `"billing_mode":"credits"` to opt into the legacy prepaid-credit model instead (see the Fee section below).
 
 Substitute that payload into the transport pattern from the wallet's doc.
 
@@ -72,7 +72,7 @@ Creating and topping up a campaign requires payment — see **How to use** above
 ### `campaign.create`
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"credits":250,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":7,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":7,"release_mode":"auto"}}
 ```
 
 Required: `cpm_rate`, `max_payout_per_submission`, `description`.
@@ -85,7 +85,8 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
-| `credits` | Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~8 over a 7-day window). **Optional** — a default grant (~$1) is used if omitted. **Submissions are not capped by credits** — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it |
+| `billing_mode` | **Optional, default `"commission"`.** No credits, no topup — molty earns only the create fee plus its 3% cut of each real payout. Pass `"credits"` to opt into the legacy prepaid per-event model (see `credits` below). |
+| `credits` | **Only valid with `billing_mode: "credits"`.** Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~8 over a 7-day window). Optional even then — a default grant (~$1) is used if omitted. Submissions are not capped by credits — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it. |
 | `payout_chain` | `solana` (default) or `base` |
 | `token_contract` | SPL mint (Solana) or ERC-20 address (Base). **Optional — defaults to USDC** on the payout chain |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required for USDC** |
@@ -93,7 +94,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
 | `releaser` | agent mode: a wallet allowed to authorize releases besides the owner |
 
-**Fee:** Flat **$1 USDC** to create (covers the credit grant regardless of count). Topup: `credits × $0.02`, minimum **$1** (50 credits). One credit = one settle event (X view-read + on-chain payout). Submissions are unbounded — credits meter molty's settlement work; the campaign pauses when credits run out and resumes on topup. **3% commission** is swept from the campaign wallet on each earner payout, added on top of the earner amount — plan for ~3% more token funding than pure CPM math.
+**Fee:** Flat **$1 USDC** to create, regardless of billing mode. By default (`billing_mode: "commission"`) that's the *only* flat fee — settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math). If you opt into `billing_mode: "credits"` instead: topup costs `credits × $0.02`, minimum **$1** (50 credits); one credit = one settle event (X view-read + on-chain payout, whether or not it results in a payout); submissions are still unbounded, but the campaign *pauses* when credits run out and `campaign.topup` resumes it. The 3% commission applies in both modes.
 
 `campaign.create` returns a `wallet_address` — **fund it by sending the payout token** (or USDC) to that address on the payout chain.
 
@@ -101,14 +102,14 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 
 | Method | Auth | What it does |
 |---|---|---|
-| `campaign.topup` `{campaign_id, credits}` | x402 (1¢/credit-priced) | Add more credits (view-checks/payouts); **resumes a paused campaign**. Min $1 (50 credits) |
-| `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token, credits |
+| `campaign.topup` `{campaign_id, credits}` | x402 (1¢/credit-priced) | `billing_mode: "credits"` campaigns only — add more credits (view-checks/payouts); **resumes a paused campaign**. Min $1 (50 credits). Rejected for commission-mode campaigns (nothing to top up). |
+| `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token, billing mode, credits (if applicable) |
 | `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
 | `campaign.release` `{campaign_id, submission_id, views}` | x402 (1¢) | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
-CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + a ~$1 credit grant; add `--credits N` to prepay more, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). `moltycash campaign list` shows your own campaigns.
+CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + commission-only billing; add `--billing credits --credits N` to opt into the legacy prepaid model, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). `moltycash campaign list` shows your own campaigns.
 
 ---
 
