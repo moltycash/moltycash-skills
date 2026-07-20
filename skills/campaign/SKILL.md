@@ -57,7 +57,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 {"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
-`cpm_rate`, `max_payout_per_submission`, and `description` are **all required**. See the full param table below.
+`description` and `token_contract` are **always required**. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
 
 Total to authorise: flat **$1 USDC**. Default billing is commission-only — no credits, nothing else to prepay. Add `"billing_mode":"credits"` to opt into the legacy prepaid-credit model instead (see the Fee section below).
 
@@ -75,12 +75,12 @@ Creating and topping up a campaign requires payment — see **How to use** above
 {"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
-Required: `cpm_rate`, `max_payout_per_submission`, `description`, `token_contract`.
+Required: `description`, `token_contract`.
 
 | Param | Meaning |
 |---|---|
-| `cpm_rate` | **MAX** payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. |
-| `max_payout_per_submission` | Hard cap paid per post (reserved from your payout-token funding per submission) |
+| `cpm_rate` | **MAX** payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. **Optional together with `max_payout_per_submission`** — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the payout token (DexScreener-priced; flat $1 for USDC). Passing `max_payout_per_submission` without `cpm_rate` is rejected. |
+| `max_payout_per_submission` | Hard cap paid per post (reserved from your payout-token funding per submission). **Optional if `cpm_rate` is also omitted** — defaults to `cpm_rate` × 10 (a post needs ~10,000 views to hit the cap) whenever `cpm_rate` is supplied (explicitly or auto-priced). |
 | `min_holder_amount` | **Optional.** Minimum amount of the campaign token the earner must hold at their payout address **to submit and receive each payout**. Defaults to $5 worth of the token (computed at creation via DexScreener) for non-USDC campaigns; USDC campaigns have no default. Pass 0 to disable. Display units (same token, same decimals). |
 | `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
