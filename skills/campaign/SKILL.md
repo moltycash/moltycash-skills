@@ -17,7 +17,7 @@ Run a **pay-per-view content campaign**: earners post content, and moltycash pay
 Every campaign uses one payout model — **daily payouts**:
 
 1. **Guaranteed base payout, ~2h after the post.** The owner has a 2-hour window to reject a submission; if not rejected it **auto-approves** and pays `min(views × cpm_rate / 1000, cap)`.
-2. **Daily top-ups.** Once a day for `window_days` (default 7, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
+2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
 3. **Cap + window.** Cumulative payout per post never exceeds `max_payout_per_submission`. Top-ups stop at the window's end. Small accounts are paid proportionally (no 1,000-view minimum).
 
 `auto` mode (X only) has moltycash read impressions from the X API automatically. `agent` mode lets your own agent report views via `campaign.release` for any platform — moltycash still derives the amount from cpm + cap, so the agent is a view oracle, not an amount setter.
@@ -54,7 +54,7 @@ For the moltycash CLI fallback (signs locally with `*_PRIVATE_KEY` env vars), se
 The payload is **identical for every wallet** — it's the JSON-RPC body posted to `https://api.molty.cash/a2a`:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":7,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
 `cpm_rate`, `max_payout_per_submission`, and `description` are **all required**. See the full param table below.
@@ -72,7 +72,7 @@ Creating and topping up a campaign requires payment — see **How to use** above
 ### `campaign.create`
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":7,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","payout_chain":"base","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
 Required: `cpm_rate`, `max_payout_per_submission`, `description`.
@@ -86,11 +86,11 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `billing_mode` | **Optional, default `"commission"`.** No credits, no topup — molty earns only the create fee plus its 3% cut of each real payout. Pass `"credits"` to opt into the legacy prepaid per-event model (see `credits` below). |
-| `credits` | **Only valid with `billing_mode: "credits"`.** Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~8 over a 7-day window). Optional even then — a default grant (~$1) is used if omitted. Submissions are not capped by credits — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it. |
+| `credits` | **Only valid with `billing_mode: "credits"`.** Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~3 over the default 2-day window). Optional even then — a default grant (~$1) is used if omitted. Submissions are not capped by credits — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it. |
 | `payout_chain` | `solana` (default) or `base` |
 | `token_contract` | SPL mint (Solana) or ERC-20 address (Base). **Optional — defaults to USDC** on the payout chain |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required for USDC** |
-| `window_days` | Daily-payout tracking window in days (default 7, 1–30) |
+| `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
 | `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
 | `releaser` | agent mode: a wallet allowed to authorize releases besides the owner |
 
@@ -109,7 +109,7 @@ Required: `cpm_rate`, `max_payout_per_submission`, `description`.
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
-CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 7 "Post about us"` (defaults to USDC + commission-only billing; add `--billing credits --credits N` to opt into the legacy prepaid model, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). `moltycash campaign list` shows your own campaigns.
+CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --chain base --window 2 "Post about us"` (defaults to USDC + commission-only billing; add `--billing credits --credits N` to opt into the legacy prepaid model, `--token <addr> --ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). `moltycash campaign list` shows your own campaigns.
 
 ---
 
