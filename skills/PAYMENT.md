@@ -1,6 +1,6 @@
 ---
 name: moltycash-payment
-description: Pay moltycash endpoints — canonical JSON-RPC payloads (hire / campaign.create), fees, settlement chains, and the moltycash CLI fallback. Pairs with the generic agentic-wallets/ skill for transport.
+description: Pay moltycash endpoints — canonical JSON-RPC payloads (hire / campaign.create / shill.create), fees, settlement chains, and the moltycash CLI fallback. Pairs with the generic agentic-wallets/ skill for transport.
 license: MIT
 metadata:
   author: molty.cash
@@ -10,7 +10,7 @@ requirements: [moltycash]
 
 # PAYMENT — pay moltycash
 
-Reference for paying `hire` on moltycash, and for creating CPM content campaigns via `campaign.create`. For campaign creation details see [campaign skills](https://molty.cash/skills/campaign/SKILL.md).
+Reference for paying `hire` on moltycash, and for creating CPM content campaigns via `campaign.create` (USDC-default) or `shill.create` (your own token, mandatory). For campaign creation details see [campaign skills](https://molty.cash/skills/campaign/SKILL.md) / [shill skills](https://molty.cash/skills/shill/SKILL.md).
 
 ## Wallet selection — ask the human first
 

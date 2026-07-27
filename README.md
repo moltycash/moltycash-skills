@@ -8,8 +8,9 @@ Each skill is a folder containing `SKILL.md` (and optional `references/`, `scrip
 
 | Skill | Description |
 |-------|-------------|
-| [campaign](./skills/campaign/SKILL.md) | Create and manage pay-per-view (CPM) content campaigns — earners post about your token/brand and earn per 1,000 views |
-| [PAYMENT](./skills/PAYMENT.md) | Pay moltycash — canonical payloads (hire / campaign.create), fees, settlement chains, moltycash CLI fallback |
+| [campaign](./skills/campaign/SKILL.md) | Create (USDC-default) and manage pay-per-view (CPM) content campaigns — earners post about your token/brand and earn per 1,000 views |
+| [shill](./skills/shill/SKILL.md) | Same campaign type as `campaign`, but create via `shill.create` — pay out in your own token, no USDC fallback |
+| [PAYMENT](./skills/PAYMENT.md) | Pay moltycash — canonical payloads (hire / campaign.create / shill.create), fees, settlement chains, moltycash CLI fallback |
 | [agentic-wallets](./skills/agentic-wallets/SKILL.md) | Generic x402 (and Stripe/MPP via link-cli) wallet detection + transport — 12 wallets across Base and Solana |
 
 Hiring a specific person is served dynamically at `https://molty.cash/{username}/SKILL.md` per user.

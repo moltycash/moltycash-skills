@@ -1,6 +1,6 @@
 ---
 name: moltycash-campaign
-description: Create pay-per-view (CPM) content campaigns with DAILY PAYOUTS — a guaranteed base payout ~2h after a post, then daily top-ups on new views. Earners post about your token/brand and earn per 1,000 views, paid in any SPL (Solana) or ERC-20 (Base) token you specify (token_contract is required; the payout chain is inferred from the address). Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
+description: Create pay-per-view (CPM) content campaigns with DAILY PAYOUTS — a guaranteed base payout ~2h after a post, then daily top-ups on new views. Earners post about your token/brand and earn per 1,000 views, paid in plain USDC by default, or in any SPL (Solana) or ERC-20 (Base) token you specify instead. Also covers topup/status/review/release/close/list — the management methods shared with moltycash-shill campaigns. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
 license: MIT
 metadata:
   author: molty.cash
@@ -30,7 +30,7 @@ Creating a campaign requires payment. Payment requires a wallet. **Before doing 
 
 ### Step 1 — Decide which wallet to use
 
-**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method (hire, campaign.create).
+**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method (hire, campaign.create, shill.create).
 
 Skip the ask only if either:
 
@@ -57,7 +57,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 {"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
-`description` and `token_contract` are **always required**. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
+`description` is **always required**. `token_contract` is optional — omit it to pay out in USDC instead (chain from `payout_chain`, default `"solana"`). `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
 
 Total to authorise: flat **$1 USDC**. Default billing is commission-only — no credits, nothing else to prepay. Add `"billing_mode":"credits"` to opt into the legacy prepaid-credit model instead (see the Fee section below).
 
@@ -75,7 +75,9 @@ Creating and topping up a campaign requires payment — see **How to use** above
 {"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
-Required: `description`, `token_contract`.
+Want `token_contract` to be **mandatory** instead of optional (fail loudly on a typo'd/omitted token rather than silently defaulting to USDC)? Use `shill.create` instead — same params, same campaign type, managed identically afterward. See [shill/SKILL.md](https://molty.cash/skills/shill/SKILL.md).
+
+Required: `description`. `token_contract` is optional — see below.
 
 | Param | Meaning |
 |---|---|
@@ -87,7 +89,8 @@ Required: `description`, `token_contract`.
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `billing_mode` | **Optional, default `"commission"`.** No credits, no topup — molty earns only the create fee plus its 3% cut of each real payout. Pass `"credits"` to opt into the legacy prepaid per-event model (see `credits` below). |
 | `credits` | **Only valid with `billing_mode: "credits"`.** Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~3 over the default 2-day window). Optional even then — a default grant (~$1) is used if omitted. Submissions are not capped by credits — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it. |
-| `token_contract` | **Required.** SPL mint (Solana) or ERC-20 address (Base) — no default. The payout chain is inferred from the address format (`0x...` = Base, base58 = Solana); there's no separate chain param |
+| `token_contract` | **Optional.** SPL mint (Solana) or ERC-20 address (Base). When given, the payout chain is inferred from the address format (`0x...` = Base, base58 = Solana). **Omit it to pay out in plain USDC instead** — see `payout_chain` below |
+| `payout_chain` | **Optional.** Only meaningful when `token_contract` is omitted — picks which chain's USDC to default to (`"base"` or `"solana"`, default `"solana"`). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required if the token is USDC** |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
 | `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
@@ -108,7 +111,7 @@ Required: `description`, `token_contract`.
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
-CLI (moltycash): `moltycash campaign create --cpm 5 --max 50 --token <addr> --window 2 "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; defaults to commission-only billing; add `--ticker FOO` for a non-USDC token, `--billing credits --credits N` to opt into the legacy prepaid model, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). `moltycash campaign list` shows your own campaigns.
+CLI (moltycash): `moltycash campaign create --payout-chain base "Post about us"` (`--payout-chain` picks which chain's USDC to pay out in, default solana; defaults to commission-only billing; `--billing credits --credits N` to opt into the legacy prepaid model, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). Want to pay out in your own token instead? `moltycash shill create --token <addr> "Post about us"` — see [shill/SKILL.md](https://molty.cash/skills/shill/SKILL.md). `moltycash campaign list` shows your own campaigns (both kinds — they're the same underlying campaign type).
 
 ---
 

@@ -4,8 +4,9 @@
 
 ## Skills
 
-- [campaign](https://molty.cash/skills/campaign/SKILL.md): Create and manage pay-per-view (CPM) content campaigns with daily payouts. Earners post about your token/brand and earn per 1,000 views, paid in any SPL (Solana) or ERC-20 (Base) token.
-- [PAYMENT](https://molty.cash/skills/PAYMENT.md): Pay moltycash endpoints — canonical payloads (hire / campaign.create) + fees + moltycash CLI fallback. Routes through the generic agentic-wallets skill.
+- [campaign](https://molty.cash/skills/campaign/SKILL.md): Create (USDC-default) and manage pay-per-view (CPM) content campaigns with daily payouts. Earners post about your token/brand and earn per 1,000 views.
+- [shill](https://molty.cash/skills/shill/SKILL.md): Same campaign type as campaign, but create via shill.create — pay out in your own token (SPL or ERC-20), no USDC fallback.
+- [PAYMENT](https://molty.cash/skills/PAYMENT.md): Pay moltycash endpoints — canonical payloads (hire / campaign.create / shill.create) + fees + moltycash CLI fallback. Routes through the generic agentic-wallets skill.
 - [agentic-wallets](https://molty.cash/skills/agentic-wallets/SKILL.md): Generic x402 (and Stripe/MPP via link-cli) wallet detection + transport. 12 wallets across Base and Solana.
 
 ## Agentic wallets
