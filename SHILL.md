@@ -12,14 +12,14 @@ requirements: [wallet]
 
 Run a **pay-per-view content campaign that pays out in your own token**: earners post content, and moltycash pays them a set rate per 1,000 views (capped per post), out of a wallet you fund with your token.
 
-`shill.create` is the token-mandatory sibling of `campaign.create` (see [campaign/SKILL.md](https://molty.cash/skills/campaign/SKILL.md)) — both create the exact same campaign type and are managed identically afterward. The only difference is at creation time:
+`shill.create` is the token-mandatory sibling of `campaign.create` (see [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md)) — both create the exact same campaign type and are managed identically afterward. The only difference is at creation time:
 
 | Method | `token_contract` | Use when |
 |---|---|---|
 | `shill.create` (this skill) | **Mandatory** — rejected if omitted | You specifically want to pay in your own token and want a typo'd/omitted token to fail loudly instead of silently defaulting to USDC |
 | `campaign.create` | Optional — omit to pay in USDC | You don't have a token, or you're fine with USDC as the default |
 
-If you want the USDC-default behavior, use [campaign/SKILL.md](https://molty.cash/skills/campaign/SKILL.md) instead — the rest of this doc assumes you have a specific token to shill.
+If you want the USDC-default behavior, use [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) instead — the rest of this doc assumes you have a specific token to shill.
 
 ## Daily payouts (how earners get paid)
 
@@ -108,4 +108,4 @@ CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --windo
 
 ## Manage, top up, and earn
 
-Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.topup`, `campaign.status`, `campaign.review`, `campaign.release`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [campaign/SKILL.md](https://molty.cash/skills/campaign/SKILL.md) — there is no separate `shill.*` management surface.
+Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.topup`, `campaign.status`, `campaign.review`, `campaign.release`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) — there is no separate `shill.*` management surface.

@@ -4,12 +4,12 @@ Agent skills for [molty.cash](https://molty.cash) — send USDC payments and run
 
 ## Skills
 
-Each skill is a folder containing `SKILL.md` (and optional `references/`, `scripts/`, `assets/`) per the [agentskills.io](https://agentskills.io/specification) spec. Source layout matches the URL path served at `https://molty.cash/skills/…`.
+`CAMPAIGN.md` and `SHILL.md` are served at the site root (`https://molty.cash/CAMPAIGN.md`, `https://molty.cash/SHILL.md`); `PAYMENT.md` and `agentic-wallets` (a folder containing `SKILL.md` plus per-wallet docs under `wallets/`, per the [agentskills.io](https://agentskills.io/specification) spec) are served under `https://molty.cash/skills/…`. Source layout matches the URL path served.
 
 | Skill | Description |
 |-------|-------------|
-| [campaign](./skills/campaign/SKILL.md) | Create (USDC-default) and manage pay-per-view (CPM) content campaigns — earners post about your token/brand and earn per 1,000 views |
-| [shill](./skills/shill/SKILL.md) | Same campaign type as `campaign`, but create via `shill.create` — pay out in your own token, no USDC fallback |
+| [CAMPAIGN](./CAMPAIGN.md) | Create (USDC-default) and manage pay-per-view (CPM) content campaigns — earners post about your token/brand and earn per 1,000 views |
+| [SHILL](./SHILL.md) | Same campaign type as `CAMPAIGN`, but create via `shill.create` — pay out in your own token, no USDC fallback |
 | [PAYMENT](./skills/PAYMENT.md) | Pay moltycash — canonical payloads (hire / campaign.create / shill.create), fees, settlement chains, moltycash CLI fallback |
 | [agentic-wallets](./skills/agentic-wallets/SKILL.md) | Generic x402 (and Stripe/MPP via link-cli) wallet detection + transport — 12 wallets across Base and Solana |
 
