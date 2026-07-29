@@ -46,10 +46,10 @@ When the moltycash endpoint returns a 402 with `accepts[]`, the agent should sel
 ## Canonical JSON-RPC payloads
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","cpm_rate":5,"max_payout_per_submission":50,"token_contract":"0x..."}}
+{"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","token_contract":"0x..."}}
 ```
 
-`hire` (CPM-based): requires `description` + `cpm_rate` (tokens per 1,000 views) + `max_payout_per_submission` (cap per post). `token_contract` is optional — SPL mint on Solana or ERC-20 0x address on Base; when given, payout chain is inferred from the address format. Omit it to pay out in USDC instead (`payout_chain` then picks which chain's USDC, default `solana`). Optional: `ticker`. Pays a $1 creation fee up front; response includes `wallet_address` — fund it with the payout token. Use `campaign.create` on the main A2A endpoint to run open (non-targeted) campaigns.
+`hire` (CPM-based, no per-post cap — dedicated to one earner, not a shared pool): requires only `description`. `cpm_rate` is optional — the earner may have set a minimum acceptable rate (USD per 1,000 views) in their dashboard; omit `cpm_rate` to use that minimum as-is, or pass a value at/above it as a higher bid (bids below the minimum are rejected before payment). If the earner has no minimum set, omitting `cpm_rate` auto-prices it at $1 worth of the payout token. `token_contract` is optional — SPL mint on Solana or ERC-20 0x address on Base; when given, payout chain is inferred from the address format. Omit it to pay out in USDC instead (`payout_chain` then picks which chain's USDC, default `solana`). Optional: `ticker`, `billing_mode` (default `commission`; pass `credits` to opt into the legacy prepaid per-event model), `credits`. Flat **$1 USDC** creation fee up front, no markup — same as `campaign.create`/`shill.create`; molty's ongoing revenue is the 3% cut of each real payout (commission mode) or prepaid credits (credits mode). Response includes `wallet_address` — fund it with the payout token. Use `campaign.create` on the main A2A endpoint to run open (non-targeted) campaigns.
 
 ## Fees
 
@@ -192,7 +192,7 @@ Take the wallet's transport pattern from its doc and substitute the canonical pa
 
 ```bash
 # Hire
-npx moltycash human hire 0xmesuthere "Write an X article on x402" --cpm 5 --max 50
+npx moltycash human hire 0xmesuthere "Write an X article on x402" --token-contract 0x...
 ```
 
 For third-party wallets, fetch the wallet's doc (`curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md`) and follow its transport pattern with the JSON-RPC payload from the *Canonical JSON-RPC payloads* section above.
@@ -222,5 +222,5 @@ If only one key is set, that network is used automatically. If multiple are set,
 
 ```bash
 # Performance hire (CPM-based, locked to this earner)
-npx moltycash human hire 0xmesuthere "Write an X article on x402" --cpm 5 --max 50
+npx moltycash human hire 0xmesuthere "Write an X article on x402" --token-contract 0x...
 ```
