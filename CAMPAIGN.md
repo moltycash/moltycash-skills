@@ -57,7 +57,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 {"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
 ```
 
-`description` is **always required**. `token_contract` is optional — omit it to pay out in USDC instead (chain from `payout_chain`, default `"solana"`). `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
+`description` is **always required**. `token_contract` is optional — omit it to pay out in USDC instead, in which case `payout_chain` becomes **required** (no default). `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
 
 Total to authorise: flat **$1 USDC**. Default billing is commission-only — no credits, nothing else to prepay. Add `"billing_mode":"credits"` to opt into the legacy prepaid-credit model instead (see the Fee section below).
 
@@ -90,7 +90,7 @@ Required: `description`. `token_contract` is optional — see below.
 | `billing_mode` | **Optional, default `"commission"`.** No credits, no topup — molty earns only the create fee plus its 3% cut of each real payout. Pass `"credits"` to opt into the legacy prepaid per-event model (see `credits` below). |
 | `credits` | **Only valid with `billing_mode: "credits"`.** Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~3 over the default 2-day window). Optional even then — a default grant (~$1) is used if omitted. Submissions are not capped by credits — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it. |
 | `token_contract` | **Optional.** SPL mint (Solana) or ERC-20 address (Base). When given, the payout chain is inferred from the address format (`0x...` = Base, base58 = Solana). **Omit it to pay out in plain USDC instead** — see `payout_chain` below |
-| `payout_chain` | **Optional.** Only meaningful when `token_contract` is omitted — picks which chain's USDC to default to (`"base"` or `"solana"`, default `"solana"`). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
+| `payout_chain` | **Required when `token_contract` is omitted** — picks which chain's USDC to pay out on (`"base"` or `"solana"`; no default). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required if the token is USDC** |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
 | `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
@@ -111,7 +111,7 @@ Required: `description`. `token_contract` is optional — see below.
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
-CLI (moltycash): `moltycash campaign create --payout-chain base "Post about us"` (`--payout-chain` picks which chain's USDC to pay out in, default solana; defaults to commission-only billing; `--billing credits --credits N` to opt into the legacy prepaid model, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). Want to pay out in your own token instead? `moltycash shill create --token <addr> "Post about us"` — see [SHILL.md](https://molty.cash/SHILL.md). `moltycash campaign list` shows your own campaigns (both kinds — they're the same underlying campaign type).
+CLI (moltycash): `moltycash campaign create --payout-chain base "Post about us"` (`--payout-chain` is **required** — picks which chain's USDC to pay out in, no default; defaults to commission-only billing; `--billing credits --credits N` to opt into the legacy prepaid model, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). Want to pay out in your own token instead? `moltycash shill create --token <addr> "Post about us"` — see [SHILL.md](https://molty.cash/SHILL.md). `moltycash campaign list` shows your own campaigns (both kinds — they're the same underlying campaign type).
 
 ---
 
