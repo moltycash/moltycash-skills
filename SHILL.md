@@ -1,6 +1,6 @@
 ---
 name: moltycash-shill
-description: Create pay-per-view (CPM) content campaigns that pay out in YOUR OWN token via shill.create — token_contract is mandatory (no USDC fallback). Earners post about your token and earn per 1,000 views, paid in the SPL (Solana) or ERC-20 (Base) token you specify. Same underlying campaign as moltycash-campaign, managed with the same methods — see that skill for topup/status/review/release/close/list. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
+description: Create pay-per-view (CPM) content campaigns that pay out in YOUR OWN token via shill.create — token_contract is mandatory (no USDC fallback). Earners post about your token and earn per 1,000 views, paid in the SPL (Solana) or ERC-20 (Base) token you specify. Same underlying campaign as moltycash-campaign, managed with the same methods — see that skill for status/review/release/close/list. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
 license: MIT
 metadata:
   author: molty.cash
@@ -66,7 +66,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 
 `description` and `token_contract` are **always required** for `shill.create`. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
 
-Total to authorise: flat **$1 USDC**. Default billing is commission-only — no credits, nothing else to prepay. Add `"billing_mode":"credits"` to opt into the legacy prepaid-credit model instead (see the Fee section below).
+Total to authorise: flat **$1 USDC**. Billing is commission-only — nothing else to prepay (see the Fee section below).
 
 Substitute that payload into the transport pattern from the wallet's doc.
 
@@ -91,22 +91,20 @@ Required: `description`, `token_contract`.
 | `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
-| `billing_mode` | **Optional, default `"commission"`.** No credits, no topup — molty earns only the create fee plus its 3% cut of each real payout. Pass `"credits"` to opt into the legacy prepaid per-event model (see `credits` below). |
-| `credits` | **Only valid with `billing_mode: "credits"`.** Prepaid settlement events (one credit = one view-check + payout; a post uses up to ~3 over the default 2-day window). Optional even then — a default grant (~$1) is used if omitted. Submissions are not capped by credits — the campaign simply *pauses* when credits run out, and `campaign.topup` resumes it. |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). Not required if the token is USDC |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
 | `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
 | `releaser` | agent mode: a wallet allowed to authorize releases besides the owner |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
-**Fee:** Flat **$1 USDC** to create, regardless of billing mode. By default (`billing_mode: "commission"`) that's the *only* flat fee — settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math). If you opt into `billing_mode: "credits"` instead: topup costs `credits × $0.02`, minimum **$1** (50 credits); one credit = one settle event (X view-read + on-chain payout, whether or not it results in a payout); submissions are still unbounded, but the campaign *pauses* when credits run out and `campaign.topup` resumes it. The 3% commission applies in both modes.
+**Fee:** Flat **$1 USDC** to create — that's the *only* flat fee. Settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math).
 
 `shill.create` returns a `wallet_address` — **fund it by sending your token** to that address on the inferred payout chain.
 
-CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --window 2 "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; add `--ticker FOO` for a non-USDC token, `--billing credits --credits N` to opt into the legacy prepaid model, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
+CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --window 2 "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; add `--ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
 
 ---
 
-## Manage, top up, and earn
+## Manage and earn
 
-Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.topup`, `campaign.status`, `campaign.review`, `campaign.release`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) — there is no separate `shill.*` management surface.
+Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.status`, `campaign.review`, `campaign.release`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) — there is no separate `shill.*` management surface.

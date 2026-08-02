@@ -49,7 +49,7 @@ When the moltycash endpoint returns a 402 with `accepts[]`, the agent should sel
 {"jsonrpc":"2.0","id":1,"method":"hire","params":{"description":"Write an X article on x402","token_contract":"0x..."}}
 ```
 
-`hire` (CPM-based, no per-post cap — dedicated to one earner, not a shared pool): requires only `description`. `cpm_rate` is optional — the earner may have set a minimum acceptable rate (USD per 1,000 views) in their dashboard; omit `cpm_rate` to use that minimum as-is, or pass a value at/above it as a higher bid (bids below the minimum are rejected before payment). If the earner has no minimum set, omitting `cpm_rate` auto-prices it at $1 worth of the payout token. `token_contract` is optional — SPL mint on Solana or ERC-20 0x address on Base; when given, payout chain is inferred from the address format. Omit it to pay out in USDC instead — `payout_chain` then becomes **required** (no default). Optional: `ticker`, `billing_mode` (default `commission`; pass `credits` to opt into the legacy prepaid per-event model), `credits`. Flat **$1 USDC** creation fee up front, no markup — same as `campaign.create`/`shill.create`; molty's ongoing revenue is the 3% cut of each real payout (commission mode) or prepaid credits (credits mode). Response includes `wallet_address` — fund it with the payout token. Use `campaign.create` on the main A2A endpoint to run open (non-targeted) campaigns.
+`hire` (CPM-based, no per-post cap — dedicated to one earner, not a shared pool): requires only `description`. `cpm_rate` is optional — the earner may have set a minimum acceptable rate (USD per 1,000 views) in their dashboard; omit `cpm_rate` to use that minimum as-is, or pass a value at/above it as a higher bid (bids below the minimum are rejected before payment). If the earner has no minimum set, omitting `cpm_rate` auto-prices it at $1 worth of the payout token. `token_contract` is optional — SPL mint on Solana or ERC-20 0x address on Base; when given, payout chain is inferred from the address format. Omit it to pay out in USDC instead — `payout_chain` then becomes **required** (no default). Optional: `ticker`. Flat **$1 USDC** creation fee up front, no markup — same as `campaign.create`/`shill.create`; molty's ongoing revenue is a 3% cut of each real payout. Response includes `wallet_address` — fund it with the payout token. Use `campaign.create` on the main A2A endpoint to run open (non-targeted) campaigns.
 
 ## Fees
 
@@ -174,7 +174,7 @@ npx moltycash reward claim --destination 0xYourBaseAddr --network base
 
 ### Rules
 
-- **Paid on actual payout** — refunded hires and unfilled campaign credits never mint rewards.
+- **Paid on actual payout** — refunded hires and unspent campaign funds never mint rewards.
 - **Wallet-only payers** (no X identity) earn into a wallet-keyed molty profile auto-created on first payment. No signup, no KYC.
 
 <!-- REWARDS_SECTION_END -->
