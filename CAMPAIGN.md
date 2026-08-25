@@ -56,7 +56,7 @@ For the moltycash CLI fallback (signs locally with `*_PRIVATE_KEY` env vars), se
 The payload is **identical for every wallet** — it's the JSON-RPC body posted to `https://api.molty.cash/a2a`:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","window_days":2,"release_mode":"auto"}}
 ```
 
 `description` is **always required**. `token_contract` is optional — omit it to pay out in USDC instead, in which case `payout_chain` becomes **required** (no default). `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
@@ -74,7 +74,7 @@ Creating a campaign requires payment — see **How to use** above for wallet sel
 ### `campaign.create`
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"campaign.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","window_days":2,"release_mode":"auto"}}
 ```
 
 Want `token_contract` to be **mandatory** instead of optional (fail loudly on a typo'd/omitted token rather than silently defaulting to USDC)? Use `shill.create` instead — same params, same campaign type, managed identically afterward. See [SHILL.md](https://molty.cash/SHILL.md).
@@ -91,7 +91,6 @@ Required: `description`. `token_contract` is optional — see below.
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `token_contract` | **Optional.** SPL mint (Solana) or ERC-20 address (Base). When given, the payout chain is inferred from the address format (`0x...` = Base, base58 = Solana). **Omit it to pay out in plain USDC instead** — see `payout_chain` below |
 | `payout_chain` | **Required when `token_contract` is omitted** — picks which chain's USDC to pay out on (`"base"` or `"solana"`; no default). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
-| `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required if the token is USDC** |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
 | `release_mode` | `auto` (moltycash reads X impressions and pays automatically; X only) or `agent` (you decide and release every payout yourself via `campaign.payout`; any platform) |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |

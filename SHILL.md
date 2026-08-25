@@ -63,7 +63,7 @@ For wallet docs, see the [agentic-wallets catalog](https://molty.cash/skills/age
 The payload is **identical for every wallet** — it's the JSON-RPC body posted to `https://api.molty.cash/a2a`:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"agent"}}
+{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","window_days":2,"release_mode":"agent"}}
 ```
 
 `description` and `token_contract` are **always required** for `shill.create`. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
@@ -79,7 +79,7 @@ Substitute that payload into the transport pattern from the wallet's doc.
 ### `shill.create`
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"agent"}}
+{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","window_days":2,"release_mode":"agent"}}
 ```
 
 Required: `description`, `token_contract`.
@@ -93,7 +93,6 @@ Required: `description`, `token_contract`.
 | `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
-| `ticker` | Token ticker; earners must mention it in the post (auto mode). Not required if the token is USDC |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
 | `release_mode` | **Recommended: `agent`** — you decide and release every payout yourself via `campaign.payout` (any platform, full control). Also available: `auto` — moltycash reads X impressions and pays automatically, zero-touch but X-only. |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
@@ -102,7 +101,7 @@ Required: `description`, `token_contract`.
 
 `shill.create` returns a `wallet_address` — **fund it by sending your token** to that address on the inferred payout chain.
 
-CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --window 2 --mode agent "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; `--mode agent` is recommended (see above) — omit `--mode` or pass `--mode auto` for X-only zero-touch settlement instead; add `--ticker FOO` for a non-USDC token, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
+CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --window 2 --mode agent "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; the ticker is resolved automatically from the token contract, no flag needed; `--mode agent` is recommended (see above) — omit `--mode` or pass `--mode auto` for X-only zero-touch settlement instead; `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
 
 ---
 
