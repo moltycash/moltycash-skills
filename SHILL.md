@@ -82,13 +82,19 @@ Skip the ask only if either:
 
 ### Step 2 — Fetch that wallet's transport doc
 
-Each catalog wallet has its own transport syntax — there is no universal CLI for paying moltycash. Fetch the doc for the wallet the human picked:
+Each catalog wallet has its own transport syntax — there is no universal CLI for paying moltycash. moltycash settles via **x402 only** (Base, Solana) — 11 wallets in the catalog can pay it:
+
+`bankr` · `circle` · `lobstercash` · `solid` · `awal` · `purl` · `agentcash` · `clawcash-cli` · `onchainos` · `moonpay` · `pay-sh`
+
+(The catalog also lists `link-cli` — Stripe/fiat via MPP — but moltycash doesn't accept Stripe/MPP payments, so it can't pay moltycash specifically.)
+
+Fetch the doc for the wallet the human picked:
 
 ```bash
 curl https://molty.cash/skills/agentic-wallets/wallets/<wallet>.md
 ```
 
-For wallet docs, see the [agentic-wallets catalog](https://molty.cash/skills/agentic-wallets/SKILL.md). For the moltycash CLI fallback (private key), see [PAYMENT.md](https://molty.cash/skills/PAYMENT.md).
+For the full catalog, see [agentic-wallets/SKILL.md](https://molty.cash/skills/agentic-wallets/SKILL.md). For the moltycash CLI fallback (private key), see [PAYMENT.md](https://molty.cash/skills/PAYMENT.md).
 
 ### Step 3 — Combine wallet transport + the canonical `shill.create` payload
 
