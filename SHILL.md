@@ -1,6 +1,6 @@
 ---
 name: moltycash-shill
-description: Create pay-per-view (CPM) content campaigns that pay out in YOUR OWN token via shill.create — token_contract is mandatory (no USDC fallback). Earners post about your token and earn per 1,000 views, paid in the SPL (Solana) or ERC-20 (Base) token you specify. Same underlying campaign as moltycash-campaign, managed with the same methods — see that skill for status/review/release/close/list. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
+description: Create and manage pay-per-view (CPM) content campaigns that pay out in YOUR OWN token via shill.create — token_contract is mandatory (no USDC fallback). Earners post about your token and earn per 1,000 views, paid in the SPL (Solana) or ERC-20 (Base) token you specify. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
 license: MIT
 metadata:
   author: molty.cash
@@ -12,20 +12,52 @@ requirements: [wallet]
 
 Run a **pay-per-view content campaign that pays out in your own token**: earners post content, and moltycash pays them a set rate per 1,000 views (capped per post), out of a wallet you fund with your token.
 
-`shill.create` is the token-mandatory sibling of `campaign.create` (see [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md)) — both create the exact same campaign type and are managed identically afterward. The only difference is at creation time:
-
-| Method | `token_contract` | Use when |
-|---|---|---|
-| `shill.create` (this skill) | **Mandatory** — rejected if omitted | You specifically want to pay in your own token and want a typo'd/omitted token to fail loudly instead of silently defaulting to USDC |
-| `campaign.create` | Optional — omit to pay in USDC | You don't have a token, or you're fine with USDC as the default |
-
-If you want the USDC-default behavior, use [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) instead — the rest of this doc assumes you have a specific token to shill.
-
 ## How earners get paid — use `agent` mode
 
-**Recommended: `release_mode: "agent"`.** You (the agent running this skill) decide and release every payout yourself via `campaign.payout` — no platform restriction to X, no formula to reverse-engineer, full control over what counts as a qualifying post and what it's worth. `cpm_rate` is advisory only in this mode — a suggested rate, not a mechanical input; `max_payout_per_submission` is still a hard, enforced ceiling regardless of what you request. Full workflow (discover open submissions, verify each, decide an amount, release or reject): [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md).
+**Recommended: `release_mode: "agent"`.** You (the agent running this skill) decide and release every payout yourself via `campaign.payout` instead of moltycash's own formula — no formula to reverse-engineer, full control over what counts as a qualifying post and what it's worth. `cpm_rate` is advisory only in this mode — a suggested rate, not a mechanical input; `max_payout_per_submission` is still a hard, enforced ceiling regardless of what you request.
 
-**Also available: `release_mode: "auto"`** — moltycash handles everything itself, no agent workflow needed. X posts only; moltycash reads impressions from the X API and pays automatically:
+### The agent workflow
+
+`auto` mode has moltycash read view counts from the X API itself and compute the payout mechanically. `agent` mode hands that judgment call to you instead: read the post yourself, decide if it qualifies, decide what it's worth, and release the payout. Use the same wallet that created the campaign the whole way through — no separate delegation setup needed.
+
+**1. Discover open submissions**
+
+```bash
+curl -s https://molty.cash/api/campaigns/{campaign_id}
+```
+
+Public, unauthenticated, free. Returns the campaign and every `submissions[]` entry with its `proof` URL and current `status`. Filter to submissions not already `paid`, `rejected`, `payout_failed`, or `spam` — those are terminal.
+
+**2. Verify each open submission**
+
+Read the submission's `proof` URL (an X post). Judge whether it actually satisfies the campaign's `description` — right format, on-topic, not spam or a duplicate.
+
+**Not compliant** → reject it (below). **Compliant** → decide a payout amount using your own judgment (views, engagement quality, anything — `cpm_rate` is only a suggestion). X's public impression-count visibility is inconsistent post-to-post, so when you're not confident in a number, **don't guess** — a submission can simply wait, call `campaign.payout` again next time you check. Nothing is lost by deferring; a wrong-but-confident number moves real money incorrectly and can't be clawed back.
+
+**3. Act — pay or reject**
+
+Both go through `campaign.payout`, paid 1¢ x402 per call:
+
+```json
+// Pay
+{"jsonrpc":"2.0","id":1,"method":"campaign.payout","params":{"campaign_id":"cmp-...","submission_id":"sub-...","amount":5,"final":false}}
+
+// Reject a non-compliant submission
+{"jsonrpc":"2.0","id":1,"method":"campaign.payout","params":{"campaign_id":"cmp-...","submission_id":"sub-...","action":"reject"}}
+```
+
+- `amount` — the payout, in the campaign token's display units. Clamped server-side to whatever's left of `max_payout_per_submission`.
+- `views` — optional. Only affects `min_views_threshold` (if set) and gets recorded for reference — never drives the amount.
+- `final: true` — closes the submission out (no further payouts against it).
+- Callable repeatedly as your assessment changes — each call adds to what's already been paid, still capped at the per-post ceiling.
+
+**4. Cadence**
+
+`campaign.payout` has **no server-side rate limit** of its own. A sensible default is to check once and pay once per submission when it's clearly done growing/settled, rather than repeatedly polling a platform that won't change.
+
+### Also available: `release_mode: "auto"`
+
+moltycash handles everything itself, no agent workflow needed. X posts only; moltycash reads impressions from the X API and pays automatically:
 
 1. **Guaranteed base payout, ~2h after the post.** The owner has a 2-hour window to reject a submission; if not rejected it **auto-approves** and pays `min(views × cpm_rate / 1000, cap)`.
 2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
@@ -41,7 +73,7 @@ Creating a campaign requires payment. Payment requires a wallet. **Before doing 
 
 ### Step 1 — Decide which wallet to use
 
-**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method (hire, campaign.create, shill.create).
+**Ask the human you are working for which wallet to pay with.** Do not auto-detect, do not default to `*_PRIVATE_KEY` env vars. Wallet selection is a deliberate choice. This rule applies to every paid moltycash method.
 
 Skip the ask only if either:
 
@@ -66,7 +98,7 @@ The payload is **identical for every wallet** — it's the JSON-RPC body posted 
 {"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","window_days":2,"release_mode":"agent"}}
 ```
 
-`description` and `token_contract` are **always required** for `shill.create`. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
+`description` and `token_contract` are **always required**. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
 
 Total to authorise: flat **$1 USDC**. Billing is commission-only — nothing else to prepay (see the Fee section below).
 
@@ -94,7 +126,7 @@ Required: `description`, `token_contract`.
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
-| `release_mode` | **Recommended: `agent`** — you decide and release every payout yourself via `campaign.payout` (any platform, full control). Also available: `auto` — moltycash reads X impressions and pays automatically, zero-touch but X-only. |
+| `release_mode` | **Recommended: `agent`** — you decide and release every payout yourself via `campaign.payout` instead of moltycash's formula. Also available: `auto` — moltycash reads X impressions and pays automatically, zero-touch. |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
 **Fee:** Flat **$1 USDC** to create — that's the *only* flat fee. Settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math).
@@ -105,6 +137,20 @@ CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --windo
 
 ---
 
-## Manage and earn
+## Other owner methods
 
-Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.status`, `campaign.review`, `campaign.payout`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) — there is no separate `shill.*` management surface.
+| Method | Auth | What it does |
+|---|---|---|
+| `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token |
+| `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves — `auto` mode only) |
+| `campaign.payout` `{campaign_id, submission_id, amount}` | x402 (1¢) | agent mode: decide and release the payout amount yourself — clamped to `max_payout_per_submission`. Optionally pass `views` for `min_views_threshold`/record-keeping only (never drives the amount). Add `final:true` to close, or `action:"reject"` |
+| `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
+| `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
+
+CLI (moltycash): `moltycash campaign status <id>` / `moltycash campaign review <id> <sub_id> <approve|reject>` / `moltycash campaign payout <id> <sub_id> --amount <n>` / `moltycash campaign close <id>` / `moltycash campaign list` — same `campaign` subcommand manages any campaign regardless of how it was created.
+
+---
+
+## Earner: discover + submit
+
+There is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API.

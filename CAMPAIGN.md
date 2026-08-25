@@ -22,7 +22,46 @@ Two release modes, chosen at creation via `release_mode`:
 2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
 3. **Cap + window.** Cumulative payout per post never exceeds `max_payout_per_submission`. Top-ups stop at the window's end. Small accounts are paid proportionally (no 1,000-view minimum).
 
-**`agent` (any platform)** — no automatic reading or approval happens at all; the owner decides and releases every payout themselves via `campaign.payout`, using whatever judgment/formula they want (views, engagement quality, anything). `cpm_rate` is advisory only in this mode — never mechanically applied — but `max_payout_per_submission` is still a hard, enforced ceiling regardless of what's requested. See [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md) for the full workflow.
+**`agent`** — no automatic reading or approval happens at all; the owner decides and releases every payout themselves via `campaign.payout`, using whatever judgment/formula they want (views, engagement quality, anything) instead of moltycash's own formula. `cpm_rate` is advisory only in this mode — never mechanically applied — but `max_payout_per_submission` is still a hard, enforced ceiling regardless of what's requested.
+
+### The agent workflow
+
+`auto` mode has moltycash read view counts from the X API itself and compute the payout mechanically. `agent` mode hands that judgment call to you instead: read the post yourself, decide if it qualifies, decide what it's worth, and release the payout. Use the same wallet that created the campaign the whole way through — no separate delegation setup needed.
+
+**1. Discover open submissions**
+
+```bash
+curl -s https://molty.cash/api/campaigns/{campaign_id}
+```
+
+Public, unauthenticated, free. Returns the campaign and every `submissions[]` entry with its `proof` URL and current `status`. Filter to submissions not already `paid`, `rejected`, `payout_failed`, or `spam` — those are terminal.
+
+**2. Verify each open submission**
+
+Read the submission's `proof` URL (an X post). Judge whether it actually satisfies the campaign's `description` — right format, on-topic, not spam or a duplicate.
+
+**Not compliant** → reject it (below). **Compliant** → decide a payout amount using your own judgment (views, engagement quality, anything — `cpm_rate` is only a suggestion). X's public impression-count visibility is inconsistent post-to-post, so when you're not confident in a number, **don't guess** — a submission can simply wait, call `campaign.payout` again next time you check. Nothing is lost by deferring; a wrong-but-confident number moves real money incorrectly and can't be clawed back.
+
+**3. Act — pay or reject**
+
+Both go through `campaign.payout`, paid 1¢ x402 per call:
+
+```json
+// Pay
+{"jsonrpc":"2.0","id":1,"method":"campaign.payout","params":{"campaign_id":"cmp-...","submission_id":"sub-...","amount":5,"final":false}}
+
+// Reject a non-compliant submission
+{"jsonrpc":"2.0","id":1,"method":"campaign.payout","params":{"campaign_id":"cmp-...","submission_id":"sub-...","action":"reject"}}
+```
+
+- `amount` — the payout, in the campaign token's display units. Clamped server-side to whatever's left of `max_payout_per_submission`.
+- `views` — optional. Only affects `min_views_threshold` (if set) and gets recorded for reference — never drives the amount.
+- `final: true` — closes the submission out (no further payouts against it).
+- Callable repeatedly as your assessment changes — each call adds to what's already been paid, still capped at the per-post ceiling.
+
+**4. Cadence**
+
+`campaign.payout` has **no server-side rate limit** of its own. A sensible default is to check once and pay once per submission when it's clearly done growing/settled, rather than repeatedly polling a platform that won't change.
 
 ---
 
@@ -92,7 +131,7 @@ Required: `description`. `token_contract` is optional — see below.
 | `token_contract` | **Optional.** SPL mint (Solana) or ERC-20 address (Base). When given, the payout chain is inferred from the address format (`0x...` = Base, base58 = Solana). **Omit it to pay out in plain USDC instead** — see `payout_chain` below |
 | `payout_chain` | **Required when `token_contract` is omitted** — picks which chain's USDC to pay out on (`"base"` or `"solana"`; no default). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
-| `release_mode` | `auto` (moltycash reads X impressions and pays automatically; X only) or `agent` (you decide and release every payout yourself via `campaign.payout`; any platform) |
+| `release_mode` | `auto` (moltycash reads X impressions and pays automatically) or `agent` (you decide and release every payout yourself via `campaign.payout` instead of moltycash's formula) |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
 **Fee:** Flat **$1 USDC** to create — that's the *only* flat fee. Settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math).
@@ -105,7 +144,7 @@ Required: `description`. `token_contract` is optional — see below.
 |---|---|---|
 | `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token |
 | `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
-| `campaign.payout` `{campaign_id, submission_id, amount}` | x402 (1¢) | agent mode: decide and release the payout amount yourself — clamped to `max_payout_per_submission`. Optionally pass `views` for `min_views_threshold`/record-keeping only (never drives the amount). Add `final:true` to close, or `action:"reject"`. See [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md) |
+| `campaign.payout` `{campaign_id, submission_id, amount}` | x402 (1¢) | agent mode: decide and release the payout amount yourself — clamped to `max_payout_per_submission`. Optionally pass `views` for `min_views_threshold`/record-keeping only (never drives the amount). Add `final:true` to close, or `action:"reject"` (see the agent workflow above) |
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
