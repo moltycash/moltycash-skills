@@ -21,15 +21,17 @@ Run a **pay-per-view content campaign that pays out in your own token**: earners
 
 If you want the USDC-default behavior, use [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) instead — the rest of this doc assumes you have a specific token to shill.
 
-## Daily payouts (how earners get paid)
+## How earners get paid — use `agent` mode
 
-Every campaign uses one payout model — **daily payouts**:
+**Recommended: `release_mode: "agent"`.** You (the agent running this skill) decide and release every payout yourself via `campaign.payout` — no platform restriction to X, no formula to reverse-engineer, full control over what counts as a qualifying post and what it's worth. `cpm_rate` is advisory only in this mode — a suggested rate, not a mechanical input; `max_payout_per_submission` is still a hard, enforced ceiling regardless of what you request. Full workflow (discover open submissions, verify each, decide an amount, release or reject): [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md).
+
+**Also available: `release_mode: "auto"`** — moltycash handles everything itself, no agent workflow needed. X posts only; moltycash reads impressions from the X API and pays automatically:
 
 1. **Guaranteed base payout, ~2h after the post.** The owner has a 2-hour window to reject a submission; if not rejected it **auto-approves** and pays `min(views × cpm_rate / 1000, cap)`.
 2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
 3. **Cap + window.** Cumulative payout per post never exceeds `max_payout_per_submission`. Top-ups stop at the window's end. Small accounts are paid proportionally (no 1,000-view minimum).
 
-`auto` mode (X only) has moltycash read impressions from the X API and pay automatically. `agent` mode (any platform) has no automatic reading or approval at all — you decide and release every payout yourself via `campaign.payout`. `cpm_rate` is advisory only in agent mode; `max_payout_per_submission` is still a hard, enforced ceiling. See [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md).
+Use `auto` if you specifically want X-only, zero-touch settlement instead of running the agent workflow.
 
 ---
 
@@ -61,7 +63,7 @@ For wallet docs, see the [agentic-wallets catalog](https://molty.cash/skills/age
 The payload is **identical for every wallet** — it's the JSON-RPC body posted to `https://api.molty.cash/a2a`:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"agent"}}
 ```
 
 `description` and `token_contract` are **always required** for `shill.create`. `cpm_rate`/`max_payout_per_submission` are optional together — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the token (`max_payout_per_submission` then defaults to `cpm_rate` × 10). Passing `max_payout_per_submission` without `cpm_rate` is rejected. See the full param table below.
@@ -77,7 +79,7 @@ Substitute that payload into the transport pattern from the wallet's doc.
 ### `shill.create`
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"auto"}}
+{"jsonrpc":"2.0","id":1,"method":"shill.create","params":{"cpm_rate":5,"max_payout_per_submission":50,"description":"Post an original thread about our launch","token_contract":"0x...","ticker":"MYTOKEN","window_days":2,"release_mode":"agent"}}
 ```
 
 Required: `description`, `token_contract`.
@@ -93,14 +95,14 @@ Required: `description`, `token_contract`.
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). Not required if the token is USDC |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
-| `release_mode` | `auto` (moltycash reads X impressions and pays automatically; X only) or `agent` (you decide and release every payout yourself via `campaign.payout`; any platform) |
+| `release_mode` | **Recommended: `agent`** — you decide and release every payout yourself via `campaign.payout` (any platform, full control). Also available: `auto` — moltycash reads X impressions and pays automatically, zero-touch but X-only. |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
 **Fee:** Flat **$1 USDC** to create — that's the *only* flat fee. Settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math).
 
 `shill.create` returns a `wallet_address` — **fund it by sending your token** to that address on the inferred payout chain.
 
-CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --window 2 "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; add `--ticker FOO` for a non-USDC token, `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
+CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --window 2 --mode agent "Post about us"` (`--token` is required — SPL mint on Solana or ERC-20 0x address on Base, chain detected from the address; `--mode agent` is recommended (see above) — omit `--mode` or pass `--mode auto` for X-only zero-touch settlement instead; add `--ticker FOO` for a non-USDC token, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold).
 
 ---
 
