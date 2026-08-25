@@ -12,15 +12,17 @@ requirements: [wallet]
 
 Run a **pay-per-view content campaign**: earners post content, and moltycash pays them a set rate per 1,000 views (capped per post), out of a wallet you fund with the payout token.
 
-## Daily payouts (how earners get paid)
+## How earners get paid
 
-Every campaign uses one payout model — **daily payouts**:
+Two release modes, chosen at creation via `release_mode`:
+
+**`auto` (X only)** — moltycash reads impressions from the X API and pays automatically, no owner action needed:
 
 1. **Guaranteed base payout, ~2h after the post.** The owner has a 2-hour window to reject a submission; if not rejected it **auto-approves** and pays `min(views × cpm_rate / 1000, cap)`.
 2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
 3. **Cap + window.** Cumulative payout per post never exceeds `max_payout_per_submission`. Top-ups stop at the window's end. Small accounts are paid proportionally (no 1,000-view minimum).
 
-`auto` mode (X only) has moltycash read impressions from the X API automatically. `agent` mode lets your own agent report views via `campaign.release` for any platform — moltycash still derives the amount from cpm + cap, so the agent is a view oracle, not an amount setter.
+**`agent` (any platform)** — no automatic reading or approval happens at all; the owner decides and releases every payout themselves via `campaign.payout`, using whatever judgment/formula they want (views, engagement quality, anything). `cpm_rate` is advisory only in this mode — never mechanically applied — but `max_payout_per_submission` is still a hard, enforced ceiling regardless of what's requested. See [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md) for the full workflow.
 
 ---
 
@@ -91,8 +93,7 @@ Required: `description`. `token_contract` is optional — see below.
 | `payout_chain` | **Required when `token_contract` is omitted** — picks which chain's USDC to pay out on (`"base"` or `"solana"`; no default). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). **Not required if the token is USDC** |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
-| `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
-| `releaser` | agent mode: a wallet allowed to authorize releases besides the owner |
+| `release_mode` | `auto` (moltycash reads X impressions and pays automatically; X only) or `agent` (you decide and release every payout yourself via `campaign.payout`; any platform) |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
 **Fee:** Flat **$1 USDC** to create — that's the *only* flat fee. Settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math).
@@ -105,7 +106,7 @@ Required: `description`. `token_contract` is optional — see below.
 |---|---|---|
 | `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token |
 | `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
-| `campaign.release` `{campaign_id, submission_id, views}` | x402 (1¢) | agent mode: report the current view count; moltycash pays per the CPM (capped). Add `final:true` to close, or `action:"reject"` |
+| `campaign.payout` `{campaign_id, submission_id, amount}` | x402 (1¢) | agent mode: decide and release the payout amount yourself — clamped to `max_payout_per_submission`. Optionally pass `views` for `min_views_threshold`/record-keeping only (never drives the amount). Add `final:true` to close, or `action:"reject"`. See [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md) |
 | `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 

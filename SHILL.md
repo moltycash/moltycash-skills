@@ -29,7 +29,7 @@ Every campaign uses one payout model — **daily payouts**:
 2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
 3. **Cap + window.** Cumulative payout per post never exceeds `max_payout_per_submission`. Top-ups stop at the window's end. Small accounts are paid proportionally (no 1,000-view minimum).
 
-`auto` mode (X only) has moltycash read impressions from the X API automatically. `agent` mode lets your own agent report views via `campaign.release` for any platform — moltycash still derives the amount from cpm + cap, so the agent is a view oracle, not an amount setter.
+`auto` mode (X only) has moltycash read impressions from the X API and pay automatically. `agent` mode (any platform) has no automatic reading or approval at all — you decide and release every payout yourself via `campaign.payout`. `cpm_rate` is advisory only in agent mode; `max_payout_per_submission` is still a hard, enforced ceiling. See [AGENT-PAYOUT.md](https://molty.cash/skills/AGENT-PAYOUT.md).
 
 ---
 
@@ -93,8 +93,7 @@ Required: `description`, `token_contract`.
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
 | `ticker` | Token ticker; earners must mention it in the post (auto mode). Not required if the token is USDC |
 | `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
-| `release_mode` | `auto` (moltycash reads X impressions; X only) or `agent` (your agent reports views) |
-| `releaser` | agent mode: a wallet allowed to authorize releases besides the owner |
+| `release_mode` | `auto` (moltycash reads X impressions and pays automatically; X only) or `agent` (you decide and release every payout yourself via `campaign.payout`; any platform) |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
 **Fee:** Flat **$1 USDC** to create — that's the *only* flat fee. Settlement work (view-checks + payouts) is otherwise free, and molty's ongoing revenue is purely the **3% commission** swept from the campaign wallet on each real earner payout, added on top of the earner amount (plan for ~3% more token funding than pure CPM math).
@@ -107,4 +106,4 @@ CLI (moltycash): `moltycash shill create --cpm 5 --max 50 --token <addr> --windo
 
 ## Manage and earn
 
-Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.status`, `campaign.review`, `campaign.release`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) — there is no separate `shill.*` management surface.
+Once created, a shill campaign is the same type as a `campaign.create` campaign — manage it (`campaign.status`, `campaign.review`, `campaign.payout`, `campaign.close`, `campaign.list`), see how earners discover + submit, and check the `$moltycash` rewards program all in [CAMPAIGN.md](https://molty.cash/CAMPAIGN.md) — there is no separate `shill.*` management surface.
