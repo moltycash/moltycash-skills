@@ -175,7 +175,11 @@ CLI (moltycash): `moltycash campaign create --payout-chain base "Post about us"`
 
 This API is campaign-creator/management only — there is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API. A post must be submitted within 6h of going up.
 
-For **USDC campaigns**, once accepted a post sits for the 2h owner-veto window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out in full, partially, or not at all depending on how the token's price moves before the window closes (see the price-target table above). Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
+For **USDC campaigns**, once accepted a post sits for the 2h owner-veto window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. Only one submission per earner per campaign at a time — submit again once the prior one's window closes.
+
+For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out in full, partially, or not at all depending on how the token's price moves before the window closes (see the price-target table above). Up to **3 open submissions per earner per campaign at once** — a slot frees the moment one resolves (paid, expired, or rejected), not on a calendar delay, so an early price-target hit lets you submit again right away instead of waiting out the full window.
+
+Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
 
 ---
 

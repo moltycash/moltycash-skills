@@ -174,3 +174,5 @@ CLI (moltycash): `moltycash campaign status <id>` / `moltycash campaign review <
 ## Earner: discover + submit
 
 There is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API.
+
+Submission limit per campaign: in `auto` mode, up to **3 open submissions at once** — a slot frees the moment one resolves (paid, expired, or rejected), not on a calendar delay, so an early price-target hit lets you submit again right away. In `agent` mode, just **1 at a time** — submit again once the prior one's window closes.
