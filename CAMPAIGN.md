@@ -28,17 +28,7 @@ Two release modes, chosen at creation via `release_mode`:
 
 1. **Owner veto window, ~2h.** Same as USDC — reject a bad submission within 2h or it auto-approves.
 2. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the same engagement-scaled formula as USDC campaigns (`min(views × effective_cpm / 1000, cap)`, effective rate 25%–100% of `cpm_rate` by engagement quality) — this becomes a fixed, final "locked reward," never recomputed again. No further X reads happen for this submission.
-3. **Price target.** The locked reward pays in **full** only if the token's price rises enough above where it was when the post went up, before `window_days` closes. The required increase depends on the token's market cap at submission — smaller caps need a bigger move:
-
-   | Market cap at submission | Required price increase |
-   |---|---|
-   | < $1M | +100% |
-   | $1M – $10M | +50% |
-   | $10M – $100M | +25% |
-   | $100M – $1B | +10% |
-   | $1B+ | none — pays as-is |
-
-   If price moved up at all but never reached the target, a small consolation amount pays instead. If price never rose above the submission-time price at all, nothing pays.
+3. **Price target.** The locked reward pays in **full** only if the token's price rises **+10%** above where it was when the post went up, before `window_days` closes — flat, same for every campaign regardless of market cap. If price moved up at all but never reached +10%, a small consolation amount pays instead. If price never rose above the submission-time price at all, nothing pays.
 
 **`agent`** — no automatic reading or approval happens at all; the owner decides and releases every payout themselves via `campaign.payout`, using whatever judgment/formula they want (views, engagement quality, anything) instead of moltycash's own formula. `cpm_rate` is advisory only in this mode — never mechanically applied — but `max_payout_per_submission` is still a hard, enforced ceiling regardless of what's requested.
 
@@ -177,7 +167,7 @@ This API is campaign-creator/management only — there is no A2A method for earn
 
 For **USDC campaigns**, once accepted a post sits for the 2h owner-veto window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. Only one submission per earner per campaign at a time — submit again once the prior one's window closes.
 
-For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out in full, partially, or not at all depending on how the token's price moves before the window closes (see the price-target table above). Up to **3 open submissions per earner per campaign at once** — a slot frees the moment one resolves (paid, expired, or rejected), not on a calendar delay, so an early price-target hit lets you submit again right away instead of waiting out the full window.
+For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out in full, partially, or not at all depending on how the token's price moves before the window closes (see the price-target section above). Up to **3 open submissions per earner per campaign at once** — a slot frees the moment one resolves (paid, expired, or rejected), not on a calendar delay, so an early price-target hit lets you submit again right away instead of waiting out the full window.
 
 Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
 

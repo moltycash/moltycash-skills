@@ -62,17 +62,7 @@ moltycash handles everything itself, no agent workflow needed. X posts only; mol
 1. **Submission window.** A post can't be submitted more than 6h after it went up.
 2. **Owner veto window, ~2h.** Same as always — reject a bad submission within 2h of posting or it auto-approves.
 3. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the engagement-scaled formula below — this becomes a fixed, final number (the "locked reward") that's never recomputed again. No further X reads happen for this submission.
-4. **Price target.** The locked reward pays in **full** only if your token's price rises enough above where it was when the post went up, before `window_days` closes. The required increase is set by your token's market cap **at submission time** — smaller caps need a bigger move:
-
-   | Market cap at submission | Required price increase |
-   |---|---|
-   | < $1M | +100% |
-   | $1M – $10M | +50% |
-   | $10M – $100M | +25% |
-   | $100M – $1B | +10% |
-   | $1B+ | none — pays as-is |
-
-   If price moved up at all but never reached that target, a small consolation amount pays instead. If price never rose above the submission-time price at all, nothing pays.
+4. **Price target.** The locked reward pays in **full** only if your token's price rises **+10%** above where it was when the post went up, before `window_days` closes — flat, same for every campaign regardless of market cap. If price moved up at all but never reached +10%, a small consolation amount pays instead. If price never rose above the submission-time price at all, nothing pays.
 5. **The engagement formula.** The locked amount is `min(views × effective_cpm / 1000, cap)`, where `effective_cpm` scales with engagement quality ((likes+RTs+replies)/views) between 25% and 100% of `cpm_rate` — organically engaged posts earn near the full rate, low-engagement/botted posts earn down toward the floor.
 6. **Cap + window.** The locked reward (and the consolation amount) never exceed `max_payout_per_submission`. Everything resolves by the end of `window_days` (default 2) — a post either hits its price target, gets the consolation amount, or resolves to nothing.
 
