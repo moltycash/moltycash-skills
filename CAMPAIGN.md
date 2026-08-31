@@ -1,6 +1,6 @@
 ---
 name: moltycash-campaign
-description: Create pay-per-view (CPM) content campaigns with DAILY PAYOUTS — a guaranteed base payout ~2h after a post, then daily top-ups on new views. Earners post about your token/brand and earn per 1,000 views, paid in plain USDC by default, or in any SPL (Solana) or ERC-20 (Base) token you specify instead. Also covers status/review/release/close/list — the management methods shared with moltycash-shill campaigns. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
+description: Create pay-per-view (CPM) content campaigns. USDC campaigns (the default) use DAILY PAYOUTS — a guaranteed base payout ~2h after a post, then daily top-ups on new views. Campaigns paying out in your own token instead use a locked reward + price-target payout — the reward is calculated once, then pays based on whether the token's price rises enough afterward. Also covers status/review/release/close/list — the management methods shared with moltycash-shill campaigns. Wallet-agnostic — works with the moltycash CLI or any catalog wallet whose chain intersects molty's accepts[].
 license: MIT
 metadata:
   author: molty.cash
@@ -16,11 +16,29 @@ Run a **pay-per-view content campaign**: earners post content, and moltycash pay
 
 Two release modes, chosen at creation via `release_mode`:
 
-**`auto` (X only)** — moltycash reads impressions from the X API and pays automatically, no owner action needed:
+**`auto` (X only)** — moltycash reads impressions from the X API and computes/pays automatically, no owner action needed. A post must be submitted within 6h of going up, for any payout token. Beyond that, the mechanics depend on the payout token:
+
+**USDC campaigns** (the default — `token_contract` omitted): **daily payouts**.
 
 1. **Guaranteed base payout, ~2h after the post.** The owner has a 2-hour window to reject a submission; if not rejected it **auto-approves** and pays `min(views × cpm_rate / 1000, cap)`.
 2. **Daily top-ups.** Once a day for `window_days` (default 2, configurable 1–30), the campaign pays the **new-view delta since the last read** × cpm/1000, up to the per-post cap.
 3. **Cap + window.** Cumulative payout per post never exceeds `max_payout_per_submission`. Top-ups stop at the window's end. Small accounts are paid proportionally (no 1,000-view minimum).
+
+**Token campaigns** (`token_contract` set to anything other than USDC): **locked reward + price target** — not daily top-ups.
+
+1. **Owner veto window, ~2h.** Same as USDC — reject a bad submission within 2h or it auto-approves.
+2. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the same engagement-scaled formula as USDC campaigns (`min(views × effective_cpm / 1000, cap)`, effective rate 25%–100% of `cpm_rate` by engagement quality) — this becomes a fixed, final "locked reward," never recomputed again. No further X reads happen for this submission.
+3. **Price target.** The locked reward pays in **full** only if the token's price rises enough above where it was when the post went up, before `window_days` closes. The required increase depends on the token's market cap at submission — smaller caps need a bigger move:
+
+   | Market cap at submission | Required price increase |
+   |---|---|
+   | < $1M | +100% |
+   | $1M – $10M | +50% |
+   | $10M – $100M | +25% |
+   | $100M – $1B | +10% |
+   | $1B+ | none — pays as-is |
+
+   If price moved up at all but never reached the target, a small consolation amount pays instead. If price never rose above the submission-time price at all, nothing pays.
 
 **`agent`** — no automatic reading or approval happens at all; the owner decides and releases every payout themselves via `campaign.payout`, using whatever judgment/formula they want (views, engagement quality, anything) instead of moltycash's own formula. `cpm_rate` is advisory only in this mode — never mechanically applied — but `max_payout_per_submission` is still a hard, enforced ceiling regardless of what's requested.
 
@@ -122,15 +140,16 @@ Required: `description`. `token_contract` is optional — see below.
 
 | Param | Meaning |
 |---|---|
-| `cpm_rate` | **MAX** payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. **Optional together with `max_payout_per_submission`** — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the payout token (DexScreener-priced; flat $1 for USDC). Passing `max_payout_per_submission` without `cpm_rate` is rejected. |
-| `max_payout_per_submission` | Hard cap paid per post (reserved from your payout-token funding per submission). **Optional if `cpm_rate` is also omitted** — defaults to `cpm_rate` × 10 (a post needs ~10,000 views to hit the cap) whenever `cpm_rate` is supplied (explicitly or auto-priced). |
+| `cpm_rate` | Basis for the payout — the MAX payout tokens per 1,000 views. The effective rate scales with engagement ((likes+RTs+replies) / views): organically engaged posts earn near this, low-engagement/botted posts earn down to 25% of it. The per-post cap scales the same way. For token campaigns in `auto` mode this is the basis for the one-time **locked reward** (see above) — whether it actually pays out then depends on the token's price afterward. In `agent` mode this is advisory only. **Optional together with `max_payout_per_submission`** — pass both, or omit both to auto-price `cpm_rate` at $1 worth of the payout token (DexScreener-priced; flat $1 for USDC). Passing `max_payout_per_submission` without `cpm_rate` is rejected. |
+| `max_payout_per_submission` | Hard cap on the payout (reserved from your payout-token funding per submission). **Optional if `cpm_rate` is also omitted** — defaults to `cpm_rate` × 10 (a post needs ~10,000 views to hit the cap) whenever `cpm_rate` is supplied (explicitly or auto-priced). |
 | `min_holder_amount` | **Optional.** Minimum amount of the campaign token the earner must hold at their payout address **to submit and receive each payout**. Defaults to $5 worth of the token (computed at creation via DexScreener) for non-USDC campaigns; USDC campaigns have no default. Pass 0 to disable. Display units (same token, same decimals). |
 | `min_followers` | **Optional.** Minimum X follower count the earner must have. 0 / omit = no requirement. |
 | `min_account_age_days` | **Optional.** Earner's X account must be at least this many days old. 0 / omit = no requirement. |
+| `require_premium` | **Optional.** Earner's X account must be Premium to submit. `false` / omit = no requirement. |
 | `min_views_threshold` | **Optional.** Post must reach this view count before payout fires. Does not block submission — payout defers until views clear the floor (or campaign is force-closed). 0 / omit = no floor. |
-| `token_contract` | **Optional.** SPL mint (Solana) or ERC-20 address (Base). When given, the payout chain is inferred from the address format (`0x...` = Base, base58 = Solana). **Omit it to pay out in plain USDC instead** — see `payout_chain` below |
+| `token_contract` | **Optional.** SPL mint (Solana) or ERC-20 address (Base). When given, the payout chain is inferred from the address format (`0x...` = Base, base58 = Solana), and `auto` mode switches to the locked-reward + price-target payout above. **Omit it to pay out in plain USDC instead** — see `payout_chain` below |
 | `payout_chain` | **Required when `token_contract` is omitted** — picks which chain's USDC to pay out on (`"base"` or `"solana"`; no default). When `token_contract` IS given, this is only checked for consistency with the inferred chain, never used to pick anything |
-| `window_days` | Daily-payout tracking window in days (default 2, 1–30) |
+| `window_days` | Tracking window in days (default 2, 1–30) — the daily-topup window for USDC campaigns, or the calculation + price-target window for token campaigns |
 | `release_mode` | `auto` (moltycash reads X impressions and pays automatically) or `agent` (you decide and release every payout yourself via `campaign.payout` instead of moltycash's formula) |
 | `post_type` | **Optional.** Restrict submissions to a specific X post format: `x_post`, `x_thread`, `x_quote`, `x_reply`, `x_short_video`, `x_long_video`, `x_article`. Omit for any format |
 
@@ -145,7 +164,7 @@ Required: `description`. `token_contract` is optional — see below.
 | `campaign.status` `{campaign_id}` | x402 (1¢) | Live wallet balance, committed/available token |
 | `campaign.review` `{campaign_id, submission_id, action}` | x402 (1¢) | Owner `approve`/`reject` a submission (reject within the 2h window to veto; otherwise it auto-approves) |
 | `campaign.payout` `{campaign_id, submission_id, amount}` | x402 (1¢) | agent mode: decide and release the payout amount yourself — clamped to `max_payout_per_submission`. Optionally pass `views` for `min_views_threshold`/record-keeping only (never drives the amount). Add `final:true` to close, or `action:"reject"` (see the agent workflow above) |
-| `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to your registered payout destination for this campaign's chain, mark closed |
+| `campaign.close` `{campaign_id}` | x402 (1¢) | Reject in-flight submissions, refund the wallet's remaining balance to the wallet you created the campaign with (falling back to your registered payout destination for this chain only if that wallet isn't valid on it), mark closed |
 | `campaign.list` `{}` | x402 (1¢) | List the campaigns you own (resolved from whichever wallet pays the call) |
 
 CLI (moltycash): `moltycash campaign create --payout-chain base "Post about us"` (`--payout-chain` is **required** — picks which chain's USDC to pay out in, no default; `--mode agent` for agent release, `--min-hold <amount>` to require a token holding, `--min-followers <n>` for a follower floor, `--min-age <days>` for an account-age floor, `--min-views <n>` to defer payout until views clear that threshold). Want to pay out in your own token instead? `moltycash shill create --token <addr> "Post about us"` — see [SHILL.md](https://molty.cash/SHILL.md). `moltycash campaign list` shows your own campaigns (both kinds — they're the same underlying campaign type).
@@ -154,9 +173,9 @@ CLI (moltycash): `moltycash campaign create --payout-chain base "Post about us"`
 
 ## Earner: discover + submit
 
-This API is campaign-creator/management only — there is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API.
+This API is campaign-creator/management only — there is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API. A post must be submitted within 6h of going up.
 
-Once a post is accepted it sits for the 2h base-payout window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
+For **USDC campaigns**, once accepted a post sits for the 2h owner-veto window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out in full, partially, or not at all depending on how the token's price moves before the window closes (see the price-target table above). Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
 
 ---
 
