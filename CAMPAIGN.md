@@ -28,10 +28,11 @@ Two release modes, chosen at creation via `release_mode`:
 
 1. **Owner veto window, ~2h.** Same as USDC — reject a bad submission within 2h or it auto-approves.
 2. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the same engagement-scaled formula as USDC campaigns (`min(views × effective_cpm / 1000, cap)`, effective rate 25%–100% of `cpm_rate` by engagement quality) — this becomes a fixed, final "locked reward," never recomputed again. No further X reads happen for this submission.
-3. **Tiered price target.** How much of the locked reward is paid depends on the **best** price the token reaches (vs. its price when the post went up) before `window_days` closes — flat boundaries, same for every campaign regardless of market cap:
-   - **Down to +10% (base pay):** 0.25× the locked reward. Every submission earns at least this — there's no $0 outcome.
-   - **+10% or more:** 1.0× the locked reward (the full engagement-calculated amount).
-   - **+50% or more:** 2.0× the locked reward — reached early, this pays out immediately rather than waiting for the window to close, since it's already the best possible tier.
+3. **Tiered price target.** How much of the locked reward is paid depends on the **best** price the token reaches (vs. its price when the post went up) before `window_days` closes — flat boundaries, same for every campaign regardless of market cap, every payout still clamped to `max_payout_per_submission`:
+   - **Down to +20% (base pay):** 1× the locked reward (the full engagement-calculated amount). Every submission earns at least this — there's no $0 outcome and no reduced tier.
+   - **+20% or more:** 2× the locked reward.
+   - **+50% or more:** 5× the locked reward.
+   - **+100% or more:** 10× the locked reward — reached early, this pays out immediately rather than waiting for the window to close, since it's already the best possible tier.
    A later price dip never loses a tier already earned — the best price observed during the window is what counts.
 
 **`agent`** — no automatic reading or approval happens at all; the owner decides and releases every payout themselves via `campaign.payout`, using whatever judgment/formula they want (views, engagement quality, anything) instead of moltycash's own formula. `cpm_rate` is advisory only in this mode — never mechanically applied — but `max_payout_per_submission` is still a hard, enforced ceiling regardless of what's requested.
@@ -171,7 +172,7 @@ This API is campaign-creator/management only — there is no A2A method for earn
 
 For **USDC campaigns**, once accepted a post sits for the 2h owner-veto window, then earns the guaranteed base payout and daily top-ups on new views for the campaign's window — up to the per-post cap. Only one submission per earner per campaign at a time — submit again once the prior one's window closes.
 
-For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out at 0.25×, 1.0×, or 2.0× depending on how the token's price moves before the window closes (see the tiered price-target section above) — you're always paid something. Up to **3 open submissions per earner per campaign at once** — a slot frees the moment one resolves (paid or rejected), not on a calendar delay, so an early 50%+ hit lets you submit again right away instead of waiting out the full window.
+For **token campaigns** (`auto` mode), the reward is calculated once ~8h after posting and locked, then pays out at 1×, 2×, 5×, or 10× depending on how the token's price moves before the window closes (see the tiered price-target section above) — you're always paid at least the full calculated reward. Up to **3 open submissions per earner per campaign at once** — a slot frees the moment one resolves (paid or rejected), not on a calendar delay, so an early 100%+ hit lets you submit again right away instead of waiting out the full window.
 
 Track it on the molty.cash dashboard → Campaigns → My Campaigns, or at `https://molty.cash/campaign/{id}`.
 

@@ -63,9 +63,10 @@ moltycash handles everything itself, no agent workflow needed. X posts only; mol
 2. **Owner veto window, ~2h.** Same as always — reject a bad submission within 2h of posting or it auto-approves.
 3. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the engagement-scaled formula below — this becomes a fixed, final number (the "locked reward") that's never recomputed again. No further X reads happen for this submission.
 4. **Tiered price target.** How much of the locked reward pays out depends on the **best** price your token reaches (vs. its price when the post went up) before `window_days` closes — flat boundaries, same for every campaign regardless of market cap:
-   - **Down to +10% (base pay):** 0.25× the locked reward. Every submission earns at least this — there's no $0 outcome.
-   - **+10% or more:** 1.0× the locked reward (the full engagement-calculated amount).
-   - **+50% or more:** 2.0× the locked reward — reached early, this pays out immediately rather than waiting for the window to close.
+   - **Down to +20% (base pay):** 1× the locked reward (the full engagement-calculated amount). Every submission earns at least this — there's no $0 outcome and no reduced tier.
+   - **+20% or more:** 2× the locked reward.
+   - **+50% or more:** 5× the locked reward.
+   - **+100% or more:** 10× the locked reward — reached early, this pays out immediately rather than waiting for the window to close.
    A later price dip never loses a tier already earned.
 5. **The engagement formula.** The locked amount (before the tier multiplier above) is `min(views × effective_cpm / 1000, cap)`, where `effective_cpm` scales with engagement quality ((likes+RTs+replies)/views) between 25% and 100% of `cpm_rate` — organically engaged posts earn near the full rate, low-engagement/botted posts earn down toward the floor.
 6. **Cap + window.** The paid-out amount (locked reward × tier multiplier) never exceeds `max_payout_per_submission`. Everything resolves by the end of `window_days` (default 2) — a post always resolves to a payout, at base pay or better.
@@ -169,4 +170,4 @@ CLI (moltycash): `moltycash campaign status <id>` / `moltycash campaign review <
 
 There is no A2A method for earners. Discovering open campaigns and submitting a post both happen through the molty.cash **web dashboard** (X login required), not this API.
 
-Submission limit per campaign: in `auto` mode, up to **3 open submissions at once** — a slot frees the moment one resolves (paid or rejected), not on a calendar delay, so an early 50%+ price-target hit lets you submit again right away. In `agent` mode, just **1 at a time** — submit again once the prior one's window closes.
+Submission limit per campaign: in `auto` mode, up to **3 open submissions at once** — a slot frees the moment one resolves (paid or rejected), not on a calendar delay, so an early 100%+ price-target hit lets you submit again right away. In `agent` mode, just **1 at a time** — submit again once the prior one's window closes.
