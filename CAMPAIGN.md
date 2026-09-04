@@ -29,7 +29,7 @@ Two release modes, chosen at creation via `release_mode`:
 1. **Owner veto window, ~2h.** Same as USDC — reject a bad submission within 2h or it auto-approves.
 2. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the same engagement-scaled formula as USDC campaigns (`min(views × effective_cpm / 1000, cap)`, effective rate 25%–100% of `cpm_rate` by engagement quality) — this becomes a fixed, final "locked reward," never recomputed again. No further X reads happen for this submission.
 3. **Tiered price target.** How much of the locked reward is paid depends on the **best** price the token reaches (vs. its price when the post went up) before `window_days` closes — flat boundaries, same for every campaign regardless of market cap:
-   - **Flat or down (base pay):** 0.25× the locked reward. Every submission earns at least this — there's no $0 outcome.
+   - **Down to +10% (base pay):** 0.25× the locked reward. Every submission earns at least this — there's no $0 outcome.
    - **+10% or more:** 1.0× the locked reward (the full engagement-calculated amount).
    - **+50% or more:** 2.0× the locked reward — reached early, this pays out immediately rather than waiting for the window to close, since it's already the best possible tier.
    A later price dip never loses a tier already earned — the best price observed during the window is what counts.

@@ -63,7 +63,7 @@ moltycash handles everything itself, no agent workflow needed. X posts only; mol
 2. **Owner veto window, ~2h.** Same as always — reject a bad submission within 2h of posting or it auto-approves.
 3. **Calculation, ~8h after the post.** moltycash reads the post's metrics **once** and computes the reward via the engagement-scaled formula below — this becomes a fixed, final number (the "locked reward") that's never recomputed again. No further X reads happen for this submission.
 4. **Tiered price target.** How much of the locked reward pays out depends on the **best** price your token reaches (vs. its price when the post went up) before `window_days` closes — flat boundaries, same for every campaign regardless of market cap:
-   - **Flat or down (base pay):** 0.25× the locked reward. Every submission earns at least this — there's no $0 outcome.
+   - **Down to +10% (base pay):** 0.25× the locked reward. Every submission earns at least this — there's no $0 outcome.
    - **+10% or more:** 1.0× the locked reward (the full engagement-calculated amount).
    - **+50% or more:** 2.0× the locked reward — reached early, this pays out immediately rather than waiting for the window to close.
    A later price dip never loses a tier already earned.
